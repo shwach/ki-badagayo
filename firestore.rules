@@ -19,9 +19,16 @@ service cloud.firestore {
                     && request.resource.data.content is string
                     && request.resource.data.content.size() > 0
                     && request.resource.data.content.size() <= 300
-                    && request.resource.data.kiPool  >= 1
-                    && request.resource.data.kiPool  == request.resource.data.kiRemaining;
-      // kiRemaining 차감은 트랜잭션으로만 허용
+                    && (
+                         // 일반 유저 자랑글: 기 풀 필수
+                         ( ('kiPool' in request.resource.data)
+                           && request.resource.data.kiPool >= 1
+                           && request.resource.data.kiPool == request.resource.data.kiRemaining )
+                         // 관리자 자랑글: 기 무제한 (kiPool/kiRemaining 없음, 차감 안 됨)
+                         || ( request.resource.data.get('isAdmin', false) == true
+                              && request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2' )
+                       );
+      // kiRemaining 차감은 트랜잭션으로만 허용 (일반 자랑글만, 관리자 글은 차감되지 않음)
       allow update: if request.auth != null
                     && request.resource.data.diff(resource.data).affectedKeys()
                        .hasOnly(['kiRemaining'])

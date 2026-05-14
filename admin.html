@@ -141,17 +141,8 @@
 
     <!-- 자랑글 작성 -->
     <div class="card">
-      <h2>📮 자랑글 작성 (관리자 — 기 소모 없음)</h2>
-
-      <div class="ki-row">
-        <button class="kp-btn" onclick="adj(-1)">−</button>
-        <div class="kp-mid">
-          <div class="kp-num" id="kp-num">5</div>
-          <div class="kp-unit">기 담기</div>
-        </div>
-        <button class="kp-btn" onclick="adj(+1)">+</button>
-      </div>
-      <div class="ki-hint" id="ki-hint">이 수만큼 회원들에게 배달됩니다</div>
+      <h2>📮 자랑글 작성 (관리자 — 기 무제한)</h2>
+      <div class="ki-hint" id="ki-hint">관리자 자랑글은 기가 무제한으로 담겨 회원들이 매일 받아갈 수 있어요</div>
 
       <textarea id="txt" maxlength="300" placeholder="자랑글 내용을 입력하세요..."></textarea>
       <div class="char-count"><span id="cnt">0</span> / 300</div>
@@ -193,7 +184,6 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db   = firebase.firestore();
 
-let kiAmt = 5;
 let me    = null;
 
 const today = () => new Date().toLocaleDateString('sv-SE');
@@ -243,13 +233,6 @@ function copyUid() {
   });
 }
 
-/* ─── ki 피커 ─── */
-function adj(d) {
-  kiAmt = Math.min(Math.max(1, kiAmt + d), 999);
-  document.getElementById('kp-num').textContent = kiAmt;
-  updateBtn();
-}
-
 document.getElementById('txt').addEventListener('input', function() {
   document.getElementById('cnt').textContent = this.value.length;
   updateBtn();
@@ -259,10 +242,10 @@ function updateBtn() {
   const ok = document.getElementById('txt').value.trim().length > 0;
   const btn = document.getElementById('btn-post');
   btn.className = 'btn-submit ' + (ok ? 'on' : 'off');
-  btn.textContent = ok ? `✨ 자랑글 배달하기 (${kiAmt}기 담기)` : '✨ 자랑글 배달하기';
+  btn.textContent = '✨ 자랑글 배달하기';
 }
 
-/* ─── 자랑글 작성 (관리자 — 기 소모 없음) ─── */
+/* ─── 자랑글 작성 (관리자 — 기 무제한, 차감 안 됨) ─── */
 async function post() {
   const content = document.getElementById('txt').value.trim();
   if (!content || !me) return;
@@ -276,15 +259,13 @@ async function post() {
       authorName:  '관리자',
       content,
       date:        today(),
-      kiPool:      kiAmt,
-      kiRemaining: kiAmt,
       isAdmin:     true,
       createdAt:   firebase.firestore.FieldValue.serverTimestamp()
     });
 
     document.getElementById('txt').value = '';
     document.getElementById('cnt').textContent = '0';
-    toast(`자랑글을 배달했어요! (${kiAmt}기 담음)`);
+    toast('자랑글을 배달했어요!');
     loadPosts();
   } catch(e) {
     toast('오류: ' + e.message);
@@ -318,7 +299,7 @@ async function loadPosts() {
         <div class="post-item">
           <div class="post-meta">
             <span class="who">${esc(p.authorName)}${p.isAdmin ? ' 👑' : ''}</span>
-            <span class="rem">🔮 ${p.kiRemaining}/${p.kiPool}기 남음</span>
+            <span class="rem">${p.isAdmin ? '🔮 기 무제한' : `🔮 ${p.kiRemaining}/${p.kiPool}기 남음`}</span>
           </div>
           <div class="post-text">${esc(p.content)}</div>
           <div class="post-date">${ts}</div>
