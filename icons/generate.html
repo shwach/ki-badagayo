@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>아이콘 생성기 — 기받아가요</title>
+  <style>
+    body {
+      background: #08001a; color: #e9d5ff;
+      font-family: -apple-system, sans-serif;
+      display: flex; flex-direction: column;
+      align-items: center; padding: 40px 20px; gap: 20px;
+    }
+    h2 { font-size: 22px; color: #c084fc; }
+    p  { font-size: 14px; color: #9d6fe8; text-align: center; line-height: 1.7; }
+    .previews { display: flex; gap: 24px; align-items: flex-end; margin: 10px 0; }
+    canvas { border-radius: 22%; border: 1px solid rgba(168,85,247,.3); }
+    button {
+      padding: 12px 28px; border-radius: 30px; border: none;
+      background: linear-gradient(135deg, #9333ea, #6d28d9);
+      color: #f3e8ff; font-size: 16px; font-weight: 700;
+      cursor: pointer; letter-spacing: .5px;
+    }
+    button:hover { opacity: .85; }
+    .step {
+      background: rgba(109,40,217,.12);
+      border: 1px solid rgba(168,85,247,.2);
+      border-radius: 14px; padding: 16px 20px; width: 100%; max-width: 400px;
+    }
+    .step h3 { font-size: 14px; color: #a855f7; margin-bottom: 6px; }
+    .step p  { font-size: 13px; color: #7c3aed; }
+    code { background: rgba(109,40,217,.3); padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <h2>🔮 아이콘 생성기</h2>
+  <p>아래 버튼을 눌러 아이콘 파일을 다운로드하세요.<br>
+     다운로드된 파일을 <code>icons/</code> 폴더에 넣으면 됩니다.</p>
+
+  <div class="previews">
+    <div>
+      <canvas id="c192" width="192" height="192"></canvas><br>
+      <center style="font-size:12px;color:#7c3aed;margin-top:4px">192px</center>
+    </div>
+    <div>
+      <canvas id="c512" width="512" height="512"></canvas><br>
+      <center style="font-size:12px;color:#7c3aed;margin-top:4px">512px</center>
+    </div>
+  </div>
+
+  <button onclick="downloadAll()">⬇️ 아이콘 2개 모두 다운로드</button>
+
+  <div class="step">
+    <h3>📁 다운로드 후</h3>
+    <p>
+      <code>icon-192.png</code> 와 <code>icon-512.png</code> 두 파일을<br>
+      <code>기받아가요/icons/</code> 폴더 안에 넣어주세요.
+    </p>
+  </div>
+
+  <script>
+    function drawOrb(canvas) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      const cx = w / 2, cy = h / 2;
+      const r = w * 0.41;
+
+      // 배경
+      ctx.fillStyle = '#08001a';
+      ctx.fillRect(0, 0, w, h);
+
+      // 외부 글로우
+      const glow = ctx.createRadialGradient(cx, cy, r * .1, cx, cy, r * 1.65);
+      glow.addColorStop(0,   'rgba(168,85,247,.4)');
+      glow.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(cx, cy, r * 1.65, 0, Math.PI * 2); ctx.fill();
+
+      // 오브 본체
+      const grad = ctx.createRadialGradient(cx - r*.22, cy - r*.22, r*.04, cx, cy, r);
+      grad.addColorStop(0,    '#f5eeff');
+      grad.addColorStop(0.17, '#ddb4fe');
+      grad.addColorStop(0.38, '#c084fc');
+      grad.addColorStop(0.56, '#a855f7');
+      grad.addColorStop(0.72, '#7c3aed');
+      grad.addColorStop(0.88, '#5b21b6');
+      grad.addColorStop(1,    '#3b0764');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+
+      // 하이라이트
+      ctx.save();
+      ctx.translate(cx - r*.18, cy - r*.22);
+      ctx.rotate(-0.58);
+      const hl = ctx.createRadialGradient(0, 0, 0, 0, 0, r * .33);
+      hl.addColorStop(0,   'rgba(255,255,255,.78)');
+      hl.addColorStop(.6,  'rgba(255,255,255,.2)');
+      hl.addColorStop(1,   'rgba(255,255,255,0)');
+      ctx.fillStyle = hl;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * .33, r * .18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+
+      // 작은 하이라이트
+      ctx.save();
+      ctx.translate(cx - r*.12, cy - r*.06);
+      ctx.rotate(-0.58);
+      const hl2 = ctx.createRadialGradient(0, 0, 0, 0, 0, r * .16);
+      hl2.addColorStop(0,  'rgba(255,255,255,.3)');
+      hl2.addColorStop(1,  'rgba(255,255,255,0)');
+      ctx.fillStyle = hl2;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, r * .16, r * .09, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 미리보기 그리기
+    drawOrb(document.getElementById('c192'));
+    drawOrb(document.getElementById('c512'));
+
+    function download(id, filename) {
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = document.getElementById(id).toDataURL('image/png');
+      a.click();
+    }
+
+    function downloadAll() {
+      download('c192', 'icon-192.png');
+      setTimeout(() => download('c512', 'icon-512.png'), 300);
+    }
+  </script>
+</body>
+</html>
