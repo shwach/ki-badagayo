@@ -742,34 +742,32 @@ async function loadFeed() {
 
     const posts = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
-      .filter(p => p.authorId !== me.uid)
-      .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      .filter(p => p.authorId !== me.uid);
 
     if (posts.length === 0) {
       wrap.style.display = 'none';
       return;
     }
 
-    // 오늘 이미 다른 글에서 기를 받았는지 확인
+    // 랜덤으로 1개 선택
+    const p = posts[Math.floor(Math.random() * posts.length)];
     const alreadyClaimedToday = uData.lastClaimDate === today();
 
     wrap.style.display = 'block';
-    posts.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'feed-card';
-      div.innerHTML = `
-        <div class="feed-top">
-          <span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span>
-        </div>
-        <div class="feed-body">${esc(p.content)}</div>
-        <button id="claim-${p.id}"
-          class="btn-feed-claim ${alreadyClaimedToday ? 'done' : 'on'}"
-          onclick="claimKi('${p.id}')"
-          ${alreadyClaimedToday ? 'disabled' : ''}>
-          ${alreadyClaimedToday ? '✅ 오늘 기를 받았어요' : '🙏 이 글에서 기 받기 (+1기)'}
-        </button>`;
-      feed.appendChild(div);
-    });
+    const div = document.createElement('div');
+    div.className = 'feed-card';
+    div.innerHTML = `
+      <div class="feed-top">
+        <span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span>
+      </div>
+      <div class="feed-body">${esc(p.content)}</div>
+      <button id="claim-${p.id}"
+        class="btn-feed-claim ${alreadyClaimedToday ? 'done' : 'on'}"
+        onclick="claimKi('${p.id}')"
+        ${alreadyClaimedToday ? 'disabled' : ''}>
+        ${alreadyClaimedToday ? '✅ 오늘 기를 받았어요' : '🙏 이 글에서 기 받기 (+1기)'}
+      </button>`;
+    feed.appendChild(div);
   } catch(e) {
     wrap.style.display = 'none';
     console.warn('피드 로드 오류:', e.message);
