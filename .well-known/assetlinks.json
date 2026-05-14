@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.shwach.kibadagayo",
+    "sha256_cert_fingerprints": [
+      "1B:DB:48:1E:29:FA:AE:F8:A7:EC:E4:6D:CF:B6:7D:4F:C2:AA:E3:66:7B:5E:FB:D9:D5:C5:5D:83:87:C5:FE:F0"
+    ]
+  }
+}]
