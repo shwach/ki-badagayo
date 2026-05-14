@@ -757,9 +757,7 @@ async function loadFeed() {
     const div = document.createElement('div');
     div.className = 'feed-card';
     div.innerHTML = `
-      <div class="feed-top">
-        <span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span>
-      </div>
+      ${p.isAdmin ? '' : `<div class="feed-top"><span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span></div>`}
       <div class="feed-body">${esc(p.content)}</div>
       <button id="claim-${p.id}"
         class="btn-feed-claim ${alreadyClaimedToday ? 'done' : 'on'}"
@@ -792,10 +790,11 @@ async function claimKi(postId) {
 
       if (!postSnap.exists)      throw new Error('글이 없습니다');
       if (userSnap.data().lastClaimDate === today()) throw new Error('오늘은 이미 기를 받았어요');
-      if (postSnap.data().kiRemaining <= 0) throw new Error('기가 모두 소진되었습니다');
-      if (postSnap.data().authorId === me.uid) throw new Error('내 글에서는 받을 수 없어요');
+      const postData = postSnap.data();
+      if (!postData.isAdmin && postData.kiRemaining <= 0) throw new Error('기가 모두 소진되었습니다');
+      if (postData.authorId === me.uid) throw new Error('내 글에서는 받을 수 없어요');
 
-      t.update(postRef, { kiRemaining: postSnap.data().kiRemaining - 1 });
+      if (!postData.isAdmin) t.update(postRef, { kiRemaining: postData.kiRemaining - 1 });
       t.set(claimRef, { uid: me.uid, postId, date: today(),
                         claimedAt: firebase.firestore.FieldValue.serverTimestamp() });
       t.update(userRef, { kiBalance: userSnap.data().kiBalance + 1, lastClaimDate: today() });
