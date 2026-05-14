@@ -8,7 +8,7 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == uid;
       allow update: if request.auth != null && request.auth.uid == uid
                     && request.resource.data.diff(resource.data).affectedKeys()
-                       .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL']);
+                       .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL','lastClaimDate']);
     }
 
     // 자랑글: 생성만 허용 (수정/삭제 불가)
