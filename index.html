@@ -80,6 +80,36 @@
                    font-size:16px; font-weight:600; color:var(--pur-d); cursor:pointer;
                    box-shadow:0 2px 12px rgba(139,92,246,.18); transition:box-shadow .2s; margin:0 auto; }
     .btn-google:hover { box-shadow:0 4px 22px rgba(139,92,246,.32); }
+    .btn-email { display:flex;align-items:center;gap:10px;background:linear-gradient(var(--grad));
+                 border:none;border-radius:50px;padding:13px 26px;
+                 font-size:16px;font-weight:600;color:#fff;cursor:pointer;
+                 box-shadow:0 2px 12px rgba(139,92,246,.3);transition:box-shadow .2s;margin:10px auto 0; }
+    .btn-email:hover { box-shadow:0 4px 22px rgba(139,92,246,.48); }
+    .login-or { font-size:13px;color:var(--muted);margin:14px 0 4px; }
+
+    /* ── 이메일 인증 페이지 ── */
+    #pg-email, #pg-verify { justify-content:center; padding:40px 28px; text-align:center; position:relative; }
+    .auth-back { position:absolute;top:20px;left:20px;background:none;border:none;
+                 color:var(--muted);font-size:14px;cursor:pointer;display:flex;align-items:center;gap:4px; }
+    .auth-tabs { display:flex;background:var(--pur-ll);border-radius:30px;padding:4px;margin-bottom:22px; }
+    .auth-tab  { flex:1;padding:9px;border-radius:26px;border:none;background:none;
+                 font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;transition:.2s; }
+    .auth-tab.active { background:#fff;color:var(--pur-d);box-shadow:0 2px 8px rgba(139,92,246,.18); }
+    .auth-field { width:100%;padding:13px 16px;border:1.5px solid var(--pur-ll);border-radius:14px;
+                  font-size:15px;color:var(--text);outline:none;margin-bottom:10px;
+                  font-family:inherit;transition:border-color .2s;background:#fff;display:block; }
+    .auth-field:focus { border-color:var(--pur); }
+    .auth-field::placeholder { color:var(--muted);opacity:.6; }
+    .btn-auth  { width:100%;padding:14px;border-radius:40px;border:none;
+                 background:linear-gradient(var(--grad));color:#fff;
+                 font-size:16px;font-weight:700;cursor:pointer;margin-top:6px;transition:opacity .2s; }
+    .btn-auth:hover { opacity:.88; }
+    .verify-icon  { font-size:56px;margin-bottom:18px; }
+    .verify-title { font-size:20px;font-weight:800;color:var(--pur-d);margin-bottom:10px; }
+    .verify-sub   { font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:28px; }
+    .btn-resend   { background:none;border:1.5px solid var(--pur-ll);border-radius:30px;
+                    padding:10px 22px;font-size:14px;color:var(--pur-d);cursor:pointer;margin-bottom:12px; }
+    .btn-resend:hover { background:var(--pur-ll); }
 
     /* ── 앱 공통 ── */
     #pg-app { padding-bottom:68px; }
@@ -293,13 +323,48 @@
 
 <!-- ── 로그인 ── -->
 <div id="pg-login" class="page">
-  <div class="login-orb"></div>
+  <div style="font-size:110px;margin-bottom:18px;animation:float3d 4s ease-in-out infinite;display:inline-block">🙏</div>
   <div class="login-title">기받아가요</div>
-  <div class="login-sub">하루에 한 번 기운을 받고,<br>자랑글로 기를 나눠요</div>
   <button class="btn-google" onclick="signIn()">
     <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
     Google로 시작하기
   </button>
+  <div class="login-or">또는</div>
+  <button class="btn-email" onclick="showPage('pg-email')">✉️ 이메일로 시작하기</button>
+</div>
+
+<!-- ── 이메일 로그인/회원가입 ── -->
+<div id="pg-email" class="page">
+  <button class="auth-back" onclick="showPage('pg-login')">← 뒤로</button>
+  <div class="login-orb" style="width:80px;height:80px;margin-bottom:18px"></div>
+  <div class="login-title" style="font-size:22px;margin-bottom:20px">기받아가요</div>
+  <div style="width:100%;max-width:340px">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">로그인</button>
+      <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">회원가입</button>
+    </div>
+    <div id="form-login">
+      <input class="auth-field" id="li-email" type="email" placeholder="이메일" autocomplete="email">
+      <input class="auth-field" id="li-pw" type="password" placeholder="비밀번호" autocomplete="current-password">
+      <button class="btn-auth" onclick="emailSignIn()">로그인</button>
+    </div>
+    <div id="form-signup" style="display:none">
+      <input class="auth-field" id="su-email" type="email" placeholder="이메일" autocomplete="email">
+      <input class="auth-field" id="su-nick" type="text" placeholder="닉네임 (최대 12자)" maxlength="12" autocomplete="nickname">
+      <input class="auth-field" id="su-pw" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password">
+      <button class="btn-auth" onclick="emailSignUp()">가입하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 이메일 인증 대기 ── -->
+<div id="pg-verify" class="page">
+  <div class="verify-icon">✉️</div>
+  <div class="verify-title">메일함을 확인해주세요</div>
+  <div class="verify-sub" id="verify-sub">인증 메일을 발송했어요.<br>메일의 링크를 클릭하면 가입이 완료됩니다.</div>
+  <button class="btn-resend" onclick="resendVerify()">인증 메일 재전송</button>
+  <button class="btn-auth" style="max-width:260px;margin:0 auto;display:block" onclick="checkVerified()">인증 완료 — 시작하기 →</button>
+  <button style="background:none;border:none;color:var(--muted);font-size:13px;margin-top:18px;cursor:pointer" onclick="auth.signOut()">로그아웃</button>
 </div>
 
 <!-- ── 앱 ── -->
@@ -475,8 +540,74 @@ function signIn() {
 }
 function signOut() { auth.signOut(); }
 
+async function emailSignUp() {
+  const email = document.getElementById('su-email').value.trim();
+  const nick  = document.getElementById('su-nick').value.trim();
+  const pw    = document.getElementById('su-pw').value;
+  if (!email || !nick || !pw) return toast('모든 항목을 입력해주세요');
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pw);
+    await cred.user.updateProfile({ displayName: nick });
+    await cred.user.sendEmailVerification();
+    document.getElementById('verify-sub').innerHTML =
+      `<b>${email}</b>로 인증 메일을 발송했어요.<br>링크를 클릭하면 가입이 완료됩니다.`;
+    showPage('pg-verify');
+  } catch(e) { toast(emailErrMsg(e.code)); }
+}
+
+async function emailSignIn() {
+  const email = document.getElementById('li-email').value.trim();
+  const pw    = document.getElementById('li-pw').value;
+  if (!email || !pw) return toast('이메일과 비밀번호를 입력해주세요');
+  try {
+    await auth.signInWithEmailAndPassword(email, pw);
+  } catch(e) { toast(emailErrMsg(e.code)); }
+}
+
+async function checkVerified() {
+  await auth.currentUser?.reload();
+  if (auth.currentUser?.emailVerified) {
+    await initUser(auth.currentUser);
+    showApp();
+  } else {
+    toast('아직 인증이 완료되지 않았어요. 메일함을 확인해주세요.');
+  }
+}
+
+async function resendVerify() {
+  try {
+    await auth.currentUser?.sendEmailVerification();
+    toast('인증 메일을 재전송했어요');
+  } catch(e) { toast('잠시 후 다시 시도해주세요'); }
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('form-login').style.display  = tab === 'login'  ? '' : 'none';
+  document.getElementById('form-signup').style.display = tab === 'signup' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+}
+
+function emailErrMsg(code) {
+  const map = {
+    'auth/email-already-in-use': '이미 사용 중인 이메일이에요',
+    'auth/invalid-email':        '이메일 형식이 올바르지 않아요',
+    'auth/weak-password':        '비밀번호는 6자 이상이어야 해요',
+    'auth/user-not-found':       '등록되지 않은 이메일이에요',
+    'auth/wrong-password':       '비밀번호가 올바르지 않아요',
+    'auth/too-many-requests':    '잠시 후 다시 시도해주세요',
+    'auth/invalid-credential':   '이메일 또는 비밀번호가 올바르지 않아요',
+  };
+  return map[code] || '오류: ' + code;
+}
+
 auth.onAuthStateChanged(async user => {
   if (user) {
+    const isEmailUser = user.providerData[0]?.providerId === 'password';
+    if (isEmailUser && !user.emailVerified) {
+      showPage('pg-verify');
+      return;
+    }
     await initUser(user);
     showApp();
   } else {
@@ -497,8 +628,8 @@ async function initUser(user) {
   } else {
     uData = snap.data();
     const upd = {};
-    if (uData.displayName !== user.displayName) upd.displayName = user.displayName;
-    if (uData.photoURL    !== user.photoURL)    upd.photoURL    = user.photoURL;
+    if (user.displayName && uData.displayName !== user.displayName) upd.displayName = user.displayName;
+    if (user.photoURL    && uData.photoURL    !== user.photoURL)    upd.photoURL    = user.photoURL;
     if (Object.keys(upd).length) { await ref.update(upd); Object.assign(uData, upd); }
   }
 }
