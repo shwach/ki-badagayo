@@ -385,7 +385,7 @@
 
       <!-- 자랑글 피드 -->
       <div class="feed-wrap" id="feed-wrap" style="display:none">
-        <div class="feed-title">📬 오늘의 자랑글</div>
+        <div class="feed-title">📬 기 배달</div>
         <div id="post-feed"></div>
       </div>
 
@@ -740,17 +740,22 @@ async function loadFeed() {
       .where('kiRemaining', '>', 0)
       .get();
 
-    const posts = snap.docs
+    const all = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
       .filter(p => p.authorId !== me.uid);
 
-    if (posts.length === 0) {
+    // 일반 유저 글 우선, 없으면 관리자 글
+    const userPosts  = all.filter(p => !p.isAdmin);
+    const adminPosts = all.filter(p =>  p.isAdmin);
+    const pool = userPosts.length > 0 ? userPosts : adminPosts;
+
+    if (pool.length === 0) {
       wrap.style.display = 'none';
       return;
     }
 
     // 랜덤으로 1개 선택
-    const p = posts[Math.floor(Math.random() * posts.length)];
+    const p = pool[Math.floor(Math.random() * pool.length)];
     const alreadyClaimedToday = uData.lastClaimDate === today();
 
     wrap.style.display = 'block';
