@@ -14,83 +14,84 @@
     body { font-family:-apple-system,BlinkMacSystemFont,'Noto Sans KR','Segoe UI',sans-serif;
            background:#f0f9ff; color:#0c4a6e; min-height:100vh; }
 
+    /* ── 헤더 ── */
     header { background:#fff; border-bottom:1px solid #bae6fd;
-             padding:16px 24px; display:flex; align-items:center; gap:12px; }
-    header h1 { font-size:18px; font-weight:800; color:#0369a1; }
-    header .badge { background:#0ea5e9; color:#fff; font-size:11px; font-weight:700;
-                    padding:2px 8px; border-radius:20px; letter-spacing:1px; }
+             padding:14px 20px; display:flex; align-items:center; gap:10px; position:sticky; top:0; z-index:10; }
+    header h1 { font-size:17px; font-weight:800; color:#0369a1; }
+    .badge { background:#0ea5e9; color:#fff; font-size:11px; font-weight:700;
+             padding:2px 8px; border-radius:20px; letter-spacing:1px; }
+    .btn-out { background:none; border:1px solid #bae6fd; border-radius:20px;
+               padding:5px 12px; font-size:12px; color:#7dd3fc; cursor:pointer; margin-left:auto; }
 
-    .container { max-width:560px; margin:0 auto; padding:28px 20px 60px; }
+    /* ── 탭 바 ── */
+    .tab-bar { display:flex; background:#fff; border-bottom:1px solid #e0f2fe;
+               position:sticky; top:49px; z-index:9; }
+    .tab-btn { flex:1; padding:13px 8px; border:none; background:none;
+               font-size:13px; font-weight:600; color:#7dd3fc; cursor:pointer;
+               border-bottom:2px solid transparent; transition:.2s; }
+    .tab-btn.active { color:#0369a1; border-bottom-color:#0ea5e9; }
 
-    /* 로그인 섹션 */
+    /* ── 컨테이너 ── */
+    .container { max-width:560px; margin:0 auto; padding:20px 16px 60px; }
+
+    /* ── 탭 패널 ── */
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+
+    /* ── 인증 섹션 ── */
     #sec-login { text-align:center; padding:60px 20px; }
     #sec-login p { font-size:15px; color:#7dd3fc; margin-bottom:24px; }
     .btn-google { display:inline-flex; align-items:center; gap:10px; background:#fff;
                   border:1.5px solid #bae6fd; border-radius:50px; padding:12px 24px;
                   font-size:15px; font-weight:600; color:#0369a1; cursor:pointer;
                   box-shadow:0 2px 10px rgba(14,165,233,.15); }
-
-    /* 관리자 정보 */
-    #sec-uid { background:#fff; border:1px solid #bae6fd; border-radius:14px;
-               padding:14px 18px; margin-bottom:20px; font-size:13px; }
-    #sec-uid .label { color:#7dd3fc; margin-bottom:4px; font-size:11px; letter-spacing:1px; text-transform:uppercase; }
-    #sec-uid .uid-val { font-family:monospace; font-size:13px; color:#0369a1;
-                        word-break:break-all; cursor:pointer; }
-    #sec-uid .uid-val:hover { text-decoration:underline; }
-    #sec-uid .copy-hint { font-size:11px; color:#bae6fd; margin-top:2px; }
-
-    /* 접근 차단 */
     #sec-blocked { text-align:center; padding:60px 20px; }
     #sec-blocked .icon { font-size:48px; margin-bottom:12px; }
     #sec-blocked h2 { font-size:18px; color:#0369a1; margin-bottom:8px; }
     #sec-blocked p { font-size:14px; color:#7dd3fc; line-height:1.7; }
     #sec-blocked code { background:#e0f2fe; padding:2px 8px; border-radius:6px; font-size:13px; }
 
-    /* 글쓰기 카드 */
+    /* ── 카드 ── */
     .card { background:#fff; border:1px solid #bae6fd; border-radius:18px;
-            box-shadow:0 4px 18px rgba(14,165,233,.08); padding:22px; margin-bottom:20px; }
-    .card h2 { font-size:16px; font-weight:700; color:#0369a1; margin-bottom:16px; }
+            box-shadow:0 4px 18px rgba(14,165,233,.08); padding:20px; margin-bottom:16px; }
+    .card h2 { font-size:15px; font-weight:700; color:#0369a1; margin-bottom:14px; }
 
-    /* ki 피커 */
-    .ki-row { display:flex; align-items:center; gap:0; margin-bottom:6px; }
-    .kp-btn { width:40px; height:40px; border-radius:50%; border:1.5px solid #bae6fd;
-              background:#f0f9ff; font-size:20px; color:#0ea5e9; cursor:pointer;
-              display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .kp-btn:hover { background:#bae6fd; }
-    .kp-mid { flex:1; text-align:center; }
-    .kp-num { font-size:40px; font-weight:900; color:#0ea5e9; line-height:1; }
-    .kp-unit { font-size:13px; color:#7dd3fc; }
-    .ki-hint { font-size:12px; color:#7dd3fc; margin-bottom:18px; text-align:center; }
+    /* ── UID 박스 ── */
+    .uid-box { background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px;
+               padding:12px 16px; margin-bottom:16px; font-size:13px; }
+    .uid-box .label { color:#7dd3fc; font-size:11px; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+    .uid-val { font-family:monospace; color:#0369a1; word-break:break-all; cursor:pointer; }
+    .uid-val:hover { text-decoration:underline; }
+    .uid-hint { font-size:11px; color:#bae6fd; margin-top:2px; }
 
-    textarea { width:100%; min-height:140px; border:1.5px solid #bae6fd; border-radius:14px;
+    /* ── 글쓰기 ── */
+    textarea { width:100%; min-height:130px; border:1.5px solid #bae6fd; border-radius:14px;
                padding:14px; font-size:15px; color:#0c4a6e; resize:none; outline:none;
                font-family:inherit; background:#fff; transition:border-color .2s; margin-bottom:6px; }
     textarea:focus { border-color:#0ea5e9; }
     textarea::placeholder { color:#bae6fd; }
-    .char-count { text-align:right; font-size:12px; color:#7dd3fc; margin-bottom:16px; }
-
-    .btn-submit { width:100%; padding:15px; border-radius:40px; border:none;
-                  font-size:16px; font-weight:700; cursor:pointer; transition:opacity .2s; }
+    .char-count { text-align:right; font-size:12px; color:#7dd3fc; margin-bottom:14px; }
+    .btn-submit { width:100%; padding:14px; border-radius:40px; border:none;
+                  font-size:15px; font-weight:700; cursor:pointer; transition:opacity .2s; }
     .btn-submit.on  { background:linear-gradient(135deg,#38bdf8,#0ea5e9,#0369a1); color:#fff; }
     .btn-submit.off { background:#e0f2fe; color:#bae6fd; cursor:default; }
 
-    /* 최근 글 목록 */
+    /* ── 자랑글 목록 ── */
     .post-item { padding:14px 0; border-bottom:1px solid #e0f2fe; }
     .post-item:last-child { border-bottom:none; }
-    .post-meta { display:flex; justify-content:space-between; margin-bottom:6px; }
-    .post-meta .who  { font-size:12px; color:#7dd3fc; }
-    .post-meta .rem  { font-size:12px; color:#0ea5e9; font-weight:600; }
-    .post-text { font-size:14px; color:#0c4a6e; line-height:1.6;
-                 white-space:pre-wrap; word-break:break-all; }
+    .post-meta { display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+    .post-meta .who { font-size:12px; color:#7dd3fc; }
+    .post-meta .rem { font-size:12px; color:#0ea5e9; font-weight:600; margin-left:auto; }
+    .post-text { font-size:14px; color:#0c4a6e; line-height:1.6; white-space:pre-wrap; word-break:break-all; }
     .post-date { font-size:11px; color:#bae6fd; margin-top:4px; }
-    .empty-posts { text-align:center; padding:24px; font-size:14px; color:#bae6fd; }
     .btn-delete { background:none; border:1px solid #fca5a5; border-radius:16px;
-                  padding:4px 12px; font-size:12px; color:#ef4444; cursor:pointer;
+                  padding:3px 10px; font-size:12px; color:#ef4444; cursor:pointer;
                   transition:background .15s; white-space:nowrap; }
     .btn-delete:hover { background:#fee2e2; }
 
-    /* 회원 목록 */
-    .user-item { padding:14px 0; border-bottom:1px solid #e0f2fe; display:flex; align-items:center; gap:10px; }
+    /* ── 회원 목록 ── */
+    .user-item { padding:14px 0; border-bottom:1px solid #e0f2fe;
+                 display:flex; align-items:center; gap:10px; }
     .user-item:last-child { border-bottom:none; }
     .user-info { flex:1; min-width:0; }
     .user-name { font-size:14px; font-weight:700; color:#0c4a6e; }
@@ -105,15 +106,14 @@
                  transition:background .15s; white-space:nowrap; flex-shrink:0; }
     .btn-unban:hover { background:#e0f2fe; }
 
-    /* 토스트 */
+    .empty-msg { text-align:center; padding:24px; font-size:14px; color:#bae6fd; }
+
+    /* ── 토스트 ── */
     #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
              background:rgba(12,74,110,.92); color:#fff; padding:10px 22px;
              border-radius:28px; font-size:14px; font-weight:600;
-             opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap; }
+             opacity:0; transition:opacity .3s; pointer-events:none; white-space:nowrap; z-index:100; }
     #toast.show { opacity:1; }
-
-    .btn-out { background:none; border:1px solid #bae6fd; border-radius:20px;
-               padding:6px 14px; font-size:12px; color:#7dd3fc; cursor:pointer; margin-left:auto; }
   </style>
 </head>
 <body>
@@ -123,6 +123,13 @@
   <span class="badge">ADMIN</span>
   <button class="btn-out" id="btn-out" style="display:none" onclick="signOut()">로그아웃</button>
 </header>
+
+<!-- 탭 바 (로그인 후에만 보임) -->
+<div class="tab-bar" id="tab-bar" style="display:none">
+  <button class="tab-btn active" id="tbtn-post" onclick="switchTab('post')">📮 자랑글</button>
+  <button class="tab-btn"        id="tbtn-user" onclick="switchTab('user')">👥 회원 관리</button>
+  <button class="tab-btn"        id="tbtn-info" onclick="switchTab('info')">⚙️ 정보</button>
+</div>
 
 <div class="container">
 
@@ -140,45 +147,49 @@
     </button>
   </div>
 
-  <!-- 접근 차단 (UID 불일치) -->
+  <!-- 접근 차단 -->
   <div id="sec-blocked" style="display:none">
     <div class="icon">🚫</div>
     <h2>접근 권한 없음</h2>
     <p>관리자 UID가 일치하지 않아요.<br>
-       <code>admin.html</code> 상단의<br>
-       <code>ADMIN_UID</code>에 내 UID를 입력해주세요.</p>
+       <code>admin.html</code>의 <code>ADMIN_UID</code>를 확인해주세요.</p>
   </div>
 
   <!-- 관리자 패널 -->
   <div id="sec-admin" style="display:none">
 
-    <!-- 내 UID -->
-    <div id="sec-uid">
-      <div class="label">내 UID (클릭하면 복사)</div>
-      <div class="uid-val" id="my-uid" onclick="copyUid()"></div>
-      <div class="copy-hint">이 값을 ADMIN_UID에 붙여넣으면 다음부터 자동 인증됩니다</div>
+    <!-- ── 탭: 자랑글 ── -->
+    <div id="panel-post" class="tab-panel active">
+
+      <div class="card">
+        <h2>📮 자랑글 작성 (기 소모 없음)</h2>
+        <textarea id="txt" maxlength="300" placeholder="자랑글 내용을 입력하세요..."></textarea>
+        <div class="char-count"><span id="cnt">0</span> / 300</div>
+        <button class="btn-submit off" id="btn-post" onclick="post()">✨ 자랑글 배달하기</button>
+      </div>
+
+      <div class="card">
+        <h2>📋 최근 자랑글 (20개)</h2>
+        <div id="post-list"><div class="empty-msg">불러오는 중...</div></div>
+      </div>
+
     </div>
 
-    <!-- 자랑글 작성 -->
-    <div class="card">
-      <h2>📮 자랑글 작성 (관리자 — 기 소모 없음)</h2>
-
-
-      <textarea id="txt" maxlength="300" placeholder="자랑글 내용을 입력하세요..."></textarea>
-      <div class="char-count"><span id="cnt">0</span> / 300</div>
-      <button class="btn-submit off" id="btn-post" onclick="post()">✨ 자랑글 배달하기</button>
+    <!-- ── 탭: 회원 관리 ── -->
+    <div id="panel-user" class="tab-panel">
+      <div class="card">
+        <h2>👥 회원 목록 (기 많은 순)</h2>
+        <div id="user-list"><div class="empty-msg">불러오는 중...</div></div>
+      </div>
     </div>
 
-    <!-- 최근 자랑글 -->
-    <div class="card">
-      <h2>📋 최근 자랑글 목록</h2>
-      <div id="post-list"><div class="empty-posts">불러오는 중...</div></div>
-    </div>
-
-    <!-- 회원 목록 -->
-    <div class="card">
-      <h2>👥 회원 목록</h2>
-      <div id="user-list"><div class="empty-posts">불러오는 중...</div></div>
+    <!-- ── 탭: 정보 ── -->
+    <div id="panel-info" class="tab-panel">
+      <div class="uid-box">
+        <div class="label">내 UID (클릭하면 복사)</div>
+        <div class="uid-val" id="my-uid" onclick="copyUid()"></div>
+        <div class="uid-hint">이 값을 ADMIN_UID에 붙여넣으면 다음부터 자동 인증됩니다</div>
+      </div>
     </div>
 
   </div>
@@ -187,9 +198,6 @@
 <div id="toast"></div>
 
 <script>
-/* ══════════════════════════════════
-   ① Firebase 설정 — index.html과 동일한 값 붙여넣기
-   ══════════════════════════════════ */
 const firebaseConfig = {
   apiKey:            "AIzaSyDXUtzrvsfTiR912OlRN7yvcK9lzKFhJKQ",
   authDomain:        "ki-badagayo.firebaseapp.com",
@@ -199,12 +207,7 @@ const firebaseConfig = {
   appId:             "1:625726911035:web:6e2ef8818b901ad613621e"
 };
 
-/* ══════════════════════════════════
-   ② 관리자 UID — 로그인 후 아래 표시되는 UID를 복사해서 넣으세요
-      비워두면 Google 로그인한 사람 누구나 접근 가능 (첫 설정용)
-   ══════════════════════════════════ */
 const ADMIN_UID = 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
-/* ══════════════════════════════════ */
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -231,36 +234,41 @@ auth.onAuthStateChanged(user => {
   me = user;
   document.getElementById('btn-out').style.display = user ? '' : 'none';
 
-  if (!user) {
-    show('sec-login'); return;
-  }
-  // UID 표시
+  if (!user) { showSec('sec-login'); return; }
+
   document.getElementById('my-uid').textContent = user.uid;
 
-  // 권한 확인: ADMIN_UID가 비어있으면 누구나 허용 (최초 설정용)
   const allowed = !ADMIN_UID || ADMIN_UID === user.uid;
-  if (!allowed) { show('sec-blocked'); return; }
+  if (!allowed) { showSec('sec-blocked'); return; }
 
-  show('sec-admin');
+  showSec('sec-admin');
+  document.getElementById('tab-bar').style.display = 'flex';
   loadPosts();
   loadUsers();
 });
 
-function show(id) {
+function showSec(id) {
   ['sec-login','sec-blocked','sec-admin'].forEach(s =>
     document.getElementById(s).style.display = s === id ? '' : 'none'
   );
+  if (id !== 'sec-admin') document.getElementById('tab-bar').style.display = 'none';
+}
+
+/* ─── 탭 전환 ─── */
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`panel-${name}`).classList.add('active');
+  document.getElementById(`tbtn-${name}`).classList.add('active');
 }
 
 /* ─── UID 복사 ─── */
 function copyUid() {
   const uid = document.getElementById('my-uid').textContent;
-  navigator.clipboard?.writeText(uid).then(() => toast('UID 복사됨!')).catch(() => {
-    toast(uid); // 클립보드 API 없으면 토스트로 표시
-  });
+  navigator.clipboard?.writeText(uid).then(() => toast('UID 복사됨!')).catch(() => toast(uid));
 }
 
-
+/* ─── 자랑글 작성 ─── */
 document.getElementById('txt').addEventListener('input', function() {
   document.getElementById('cnt').textContent = this.value.length;
   updateBtn();
@@ -268,12 +276,9 @@ document.getElementById('txt').addEventListener('input', function() {
 
 function updateBtn() {
   const ok = document.getElementById('txt').value.trim().length > 0;
-  const btn = document.getElementById('btn-post');
-  btn.className = 'btn-submit ' + (ok ? 'on' : 'off');
-  btn.textContent = ok ? '✨ 자랑글 배달하기' : '✨ 자랑글 배달하기';
+  document.getElementById('btn-post').className = 'btn-submit ' + (ok ? 'on' : 'off');
 }
 
-/* ─── 자랑글 작성 (관리자 — 기 소모 없음) ─── */
 async function post() {
   const content = document.getElementById('txt').value.trim();
   if (!content || !me) return;
@@ -283,95 +288,43 @@ async function post() {
 
   try {
     await db.collection('posts').add({
-      authorId:    me.uid,
-      authorName:  '관리자',
-      content,
-      date:        today(),
-      kiPool:      9999,
-      kiRemaining: 9999,
-      isAdmin:     true,
-      createdAt:   firebase.firestore.FieldValue.serverTimestamp()
+      authorId: me.uid, authorName: '관리자', content,
+      date: today(), kiPool: 9999, kiRemaining: 9999,
+      isAdmin: true, createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-
     document.getElementById('txt').value = '';
     document.getElementById('cnt').textContent = '0';
     toast('자랑글을 배달했어요!');
     loadPosts();
-  } catch(e) {
-    toast('오류: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    updateBtn();
-  }
+  } catch(e) { toast('오류: ' + e.message); }
+  finally { btn.disabled = false; updateBtn(); }
 }
 
-/* ─── 회원 목록 ─── */
-async function loadUsers() {
-  const list = document.getElementById('user-list');
-  list.innerHTML = '<div class="empty-posts">불러오는 중...</div>';
-
+/* ─── 자랑글 목록 ─── */
+async function loadPosts() {
+  const list = document.getElementById('post-list');
+  list.innerHTML = '<div class="empty-msg">불러오는 중...</div>';
   try {
-    const snap = await db.collection('users').orderBy('kiBalance', 'desc').limit(50).get();
-
-    if (snap.empty) {
-      list.innerHTML = '<div class="empty-posts">회원이 없어요.</div>';
-      return;
-    }
+    const snap = await db.collection('posts').orderBy('createdAt', 'desc').limit(20).get();
+    if (snap.empty) { list.innerHTML = '<div class="empty-msg">아직 자랑글이 없어요.</div>'; return; }
 
     list.innerHTML = '';
     snap.docs.forEach(d => {
-      const u = d.data();
-      const isBanned = u.banned === true;
+      const p = d.data();
+      const ts = p.createdAt?.toDate?.()?.toLocaleString('ko-KR') || '';
       const item = document.createElement('div');
-      item.className = 'user-item';
-      item.id = `user-${d.id}`;
+      item.className = 'post-item'; item.id = `item-${d.id}`;
       item.innerHTML = `
-        <div class="user-info">
-          <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned">🚫 차단됨</span>' : ''}</div>
-          <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
+        <div class="post-meta">
+          <span class="who">${esc(p.authorName)}${p.isAdmin ? ' 👑' : ''}${p.authorBanned ? ' 🚫' : ''}</span>
+          <span class="rem">🔮 ${p.kiRemaining}/${p.kiPool}기</span>
+          <button class="btn-delete" onclick="deletePost('${d.id}')">🗑 삭제</button>
         </div>
-        ${isBanned
-          ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`
-          : `<button class="btn-ban"   onclick="banUser('${d.id}')">차단</button>`
-        }`;
+        <div class="post-text">${esc(p.content)}</div>
+        <div class="post-date">${ts}</div>`;
       list.appendChild(item);
     });
-  } catch(e) {
-    list.innerHTML = `<div class="empty-posts">오류: ${esc(e.message)}</div>`;
-  }
-}
-
-/* ─── 회원 차단 ─── */
-async function banUser(uid) {
-  if (!confirm('이 회원을 차단할까요? 자랑글을 쓸 수 없고 기존 글도 배달되지 않습니다.')) return;
-  try {
-    const batch = db.batch();
-    batch.update(db.collection('users').doc(uid), { banned: true });
-
-    // 해당 유저의 글 전체에 authorBanned 표시
-    const posts = await db.collection('posts').where('authorId', '==', uid).get();
-    posts.forEach(d => batch.update(d.ref, { authorBanned: true }));
-
-    await batch.commit();
-    toast('차단됐어요');
-    loadUsers();
-  } catch(e) { toast('오류: ' + e.message); }
-}
-
-async function unbanUser(uid) {
-  if (!confirm('차단을 해제할까요?')) return;
-  try {
-    const batch = db.batch();
-    batch.update(db.collection('users').doc(uid), { banned: false });
-
-    // 해당 유저의 글 authorBanned 해제
-    const posts = await db.collection('posts').where('authorId', '==', uid).get();
-    posts.forEach(d => batch.update(d.ref, { authorBanned: false }));
-
-    await batch.commit();
-    toast('차단 해제됐어요');
-    loadUsers();
-  } catch(e) { toast('오류: ' + e.message); }
+  } catch(e) { list.innerHTML = `<div class="empty-msg">오류: ${esc(e.message)}</div>`; }
 }
 
 /* ─── 자랑글 삭제 ─── */
@@ -381,51 +334,61 @@ async function deletePost(postId) {
     await db.collection('posts').doc(postId).delete();
     document.getElementById(`item-${postId}`)?.remove();
     toast('삭제됐어요');
-    // 목록이 비었으면 안내 문구 표시
-    if (!document.getElementById('post-list').querySelector('.post-item')) {
-      document.getElementById('post-list').innerHTML = '<div class="empty-posts">아직 자랑글이 없어요.</div>';
-    }
-  } catch(e) {
-    toast('삭제 실패: ' + e.message);
-  }
+    if (!document.getElementById('post-list').querySelector('.post-item'))
+      document.getElementById('post-list').innerHTML = '<div class="empty-msg">아직 자랑글이 없어요.</div>';
+  } catch(e) { toast('삭제 실패: ' + e.message); }
 }
 
-/* ─── 최근 자랑글 목록 ─── */
-async function loadPosts() {
-  const list = document.getElementById('post-list');
-  list.innerHTML = '<div class="empty-posts">불러오는 중...</div>';
-
+/* ─── 회원 목록 ─── */
+async function loadUsers() {
+  const list = document.getElementById('user-list');
+  list.innerHTML = '<div class="empty-msg">불러오는 중...</div>';
   try {
-    const snap = await db.collection('posts')
-      .orderBy('createdAt', 'desc')
-      .limit(20)
-      .get();
-
-    if (snap.empty) {
-      list.innerHTML = '<div class="empty-posts">아직 자랑글이 없어요.</div>';
-      return;
-    }
+    const snap = await db.collection('users').orderBy('kiBalance', 'desc').limit(50).get();
+    if (snap.empty) { list.innerHTML = '<div class="empty-msg">회원이 없어요.</div>'; return; }
 
     list.innerHTML = '';
     snap.docs.forEach(d => {
-      const p = d.data();
-      const ts = p.createdAt?.toDate?.()?.toLocaleString('ko-KR') || '';
+      const u = d.data();
+      const isBanned = u.banned === true;
       const item = document.createElement('div');
-      item.className = 'post-item';
-      item.id = `item-${d.id}`;
+      item.className = 'user-item'; item.id = `user-${d.id}`;
       item.innerHTML = `
-        <div class="post-meta">
-          <span class="who">${esc(p.authorName)}${p.isAdmin ? ' 👑' : ''}</span>
-          <span class="rem">🔮 ${p.kiRemaining}/${p.kiPool}기 남음</span>
-          <button class="btn-delete" onclick="deletePost('${d.id}')">🗑 삭제</button>
+        <div class="user-info">
+          <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned"> 🚫 차단됨</span>' : ''}</div>
+          <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
         </div>
-        <div class="post-text">${esc(p.content)}</div>
-        <div class="post-date">${ts}</div>`;
+        ${isBanned
+          ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`
+          : `<button class="btn-ban"   onclick="banUser('${d.id}')">차단</button>`}`;
       list.appendChild(item);
     });
-  } catch(e) {
-    list.innerHTML = `<div class="empty-posts">오류: ${esc(e.message)}</div>`;
-  }
+  } catch(e) { list.innerHTML = `<div class="empty-msg">오류: ${esc(e.message)}</div>`; }
+}
+
+/* ─── 차단 / 해제 ─── */
+async function banUser(uid) {
+  if (!confirm('이 회원을 차단할까요? 자랑글을 쓸 수 없고 기존 글도 배달되지 않습니다.')) return;
+  try {
+    const batch = db.batch();
+    batch.update(db.collection('users').doc(uid), { banned: true });
+    const posts = await db.collection('posts').where('authorId', '==', uid).get();
+    posts.forEach(d => batch.update(d.ref, { authorBanned: true }));
+    await batch.commit();
+    toast('차단됐어요'); loadUsers();
+  } catch(e) { toast('오류: ' + e.message); }
+}
+
+async function unbanUser(uid) {
+  if (!confirm('차단을 해제할까요?')) return;
+  try {
+    const batch = db.batch();
+    batch.update(db.collection('users').doc(uid), { banned: false });
+    const posts = await db.collection('posts').where('authorId', '==', uid).get();
+    posts.forEach(d => batch.update(d.ref, { authorBanned: false }));
+    await batch.commit();
+    toast('차단 해제됐어요'); loadUsers();
+  } catch(e) { toast('오류: ' + e.message); }
 }
 </script>
 </body>
