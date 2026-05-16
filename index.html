@@ -838,6 +838,48 @@ async function claimKi(postId) {
   }
 }
 
+/* ─── 콘텐츠 필터 ─── */
+function checkContent(text) {
+  const t = text.trim();
+
+  // 1. 최소 길이
+  if (t.length < 5) return '내용이 너무 짧아요 (5자 이상)';
+
+  // 2. URL / 링크 스팸
+  if (/https?:\/\/|www\.|\.com|\.net|\.kr|bit\.ly/i.test(t))
+    return '링크는 포함할 수 없어요';
+
+  // 3. 연속 반복 문자 (같은 글자 8개 이상)
+  if (/(.)\1{7,}/.test(t))
+    return '반복되는 내용은 올릴 수 없어요';
+
+  // 4. 자음/모음 연타 스팸 (ㅋㅋㅋ, ㅎㅎㅎ 등 6개 이상)
+  if (/[ㄱ-ㅎㅏ-ㅣ]{6,}/.test(t))
+    return '의미 없는 내용은 올릴 수 없어요';
+
+  // 5. 성적·폭력적 키워드
+  const banned = [
+    // 성적
+    '섹스','섹ㅅ','성교','야동','포르노','porn','sex','nude','성기','음경','음부',
+    '보지','자지','씹','정액','사정','자위','오르가','딜도','콘돔착용','원나잇','원나이트',
+    '조건만남','만남구함','만남구해','빨아줄','핥아줄','삽입','강간','성폭','윤간',
+    // 폭력·혐오
+    '죽여버','죽여줄','죽고싶','죽을래','패죽','칼로찌','총으로','폭탄','테러',
+    '자살방법','자해','살인','학살','폭행','린치','고문',
+    // 심한 욕설
+    '개새끼','개색끼','씨발','ㅅㅂ','sibal','존나','좆','보지같','보지년',
+    '창녀','걸레년','병신새','뇌졸','애미뒤','애비없는',
+  ];
+
+  const normalized = t.toLowerCase().replace(/\s+/g, '');
+  for (const word of banned) {
+    if (normalized.includes(word.toLowerCase().replace(/\s+/g, '')))
+      return '부적절한 내용이 포함되어 있어요';
+  }
+
+  return null; // 통과
+}
+
 /* ─── ki 피커 ─── */
 function adjustKi(delta) {
   const max = uData?.kiBalance || 0;
@@ -867,6 +909,9 @@ function updateSubmitBtn() {
 async function submitPost() {
   const content = writeArea.value.trim();
   if (!content || !uData || uData.kiBalance < kiPick || kiPick < 1) return;
+
+  const filterMsg = checkContent(content);
+  if (filterMsg) { toast('🚫 ' + filterMsg); return; }
 
   const btn = document.getElementById('submit-btn');
   btn.disabled = true; btn.textContent = '올리는 중...';

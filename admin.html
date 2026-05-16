@@ -84,6 +84,10 @@
                  white-space:pre-wrap; word-break:break-all; }
     .post-date { font-size:11px; color:#bae6fd; margin-top:4px; }
     .empty-posts { text-align:center; padding:24px; font-size:14px; color:#bae6fd; }
+    .btn-delete { background:none; border:1px solid #fca5a5; border-radius:16px;
+                  padding:4px 12px; font-size:12px; color:#ef4444; cursor:pointer;
+                  transition:background .15s; white-space:nowrap; }
+    .btn-delete:hover { background:#fee2e2; }
 
     /* 토스트 */
     #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
@@ -278,6 +282,22 @@ async function post() {
   }
 }
 
+/* ─── 자랑글 삭제 ─── */
+async function deletePost(postId) {
+  if (!confirm('이 자랑글을 삭제할까요?')) return;
+  try {
+    await db.collection('posts').doc(postId).delete();
+    document.getElementById(`item-${postId}`)?.remove();
+    toast('삭제됐어요');
+    // 목록이 비었으면 안내 문구 표시
+    if (!document.getElementById('post-list').querySelector('.post-item')) {
+      document.getElementById('post-list').innerHTML = '<div class="empty-posts">아직 자랑글이 없어요.</div>';
+    }
+  } catch(e) {
+    toast('삭제 실패: ' + e.message);
+  }
+}
+
 /* ─── 최근 자랑글 목록 ─── */
 async function loadPosts() {
   const list = document.getElementById('post-list');
@@ -298,15 +318,18 @@ async function loadPosts() {
     snap.docs.forEach(d => {
       const p = d.data();
       const ts = p.createdAt?.toDate?.()?.toLocaleString('ko-KR') || '';
-      list.innerHTML += `
-        <div class="post-item">
-          <div class="post-meta">
-            <span class="who">${esc(p.authorName)}${p.isAdmin ? ' 👑' : ''}</span>
-            <span class="rem">🔮 ${p.kiRemaining}/${p.kiPool}기 남음</span>
-          </div>
-          <div class="post-text">${esc(p.content)}</div>
-          <div class="post-date">${ts}</div>
-        </div>`;
+      const item = document.createElement('div');
+      item.className = 'post-item';
+      item.id = `item-${d.id}`;
+      item.innerHTML = `
+        <div class="post-meta">
+          <span class="who">${esc(p.authorName)}${p.isAdmin ? ' 👑' : ''}</span>
+          <span class="rem">🔮 ${p.kiRemaining}/${p.kiPool}기 남음</span>
+          <button class="btn-delete" onclick="deletePost('${d.id}')">🗑 삭제</button>
+        </div>
+        <div class="post-text">${esc(p.content)}</div>
+        <div class="post-date">${ts}</div>`;
+      list.appendChild(item);
     });
   } catch(e) {
     list.innerHTML = `<div class="empty-posts">오류: ${esc(e.message)}</div>`;
