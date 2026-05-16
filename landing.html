@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기받아가요 🙏 — 하루 한 번 기운을 나눠요</title>
+
+  <!-- OG / SNS 미리보기 -->
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://shwach.github.io/ki-badagayo/landing.html">
+  <meta property="og:title"       content="기받아가요 🙏">
+  <meta property="og:description" content="하루에 한 번, 자랑글을 올리고 기운을 나눠요. 누군가의 기운이 당신에게 배달됩니다.">
+  <meta property="og:image"       content="https://shwach.github.io/ki-badagayo/icons/icon-512.png">
+  <meta property="og:locale"      content="ko_KR">
+  <meta name="twitter:card"        content="summary">
+  <meta name="twitter:title"       content="기받아가요 🙏">
+  <meta name="twitter:description" content="하루에 한 번, 자랑글을 올리고 기운을 나눠요.">
+  <meta name="twitter:image"       content="https://shwach.github.io/ki-badagayo/icons/icon-512.png">
+  <meta name="description"         content="하루에 한 번, 자랑글을 올리고 기운을 나눠요. 누군가의 기운이 당신에게 배달됩니다.">
+
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --sky:   #38bdf8;
+      --pur:   #a78bfa;
+      --pur-d: #7c3aed;
+      --pur-dd:#5b21b6;
+      --pur-ll:#ede9fe;
+      --text:  #1e1b4b;
+      --muted: #818cf8;
+      --grad:  135deg,#38bdf8,#818cf8,#a78bfa,#8b5cf6;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans KR', 'Segoe UI', sans-serif;
+      color: var(--text);
+      background: #f8f6ff;
+      overflow-x: hidden;
+    }
+
+    /* ── 배경 파티클 ── */
+    #bg-hands { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+    .hand { position:absolute; bottom:-60px; font-size:var(--sz); opacity:0;
+            animation:riseHand var(--d) ease-in-out infinite var(--dl); user-select:none; }
+    @keyframes riseHand {
+      0%   { transform:translateY(0);       opacity:0;   }
+      12%  { opacity:.08; }
+      100% { transform:translateY(-115vh);  opacity:0;   }
+    }
+
+    /* ── 공통 ── */
+    section { position:relative; z-index:1; }
+    .inner  { max-width:640px; margin:0 auto; padding:0 24px; }
+
+    /* ── 히어로 ── */
+    .hero {
+      min-height:100vh;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:60px 24px 80px;
+      background:
+        radial-gradient(ellipse at 15% 10%,  rgba(56,189,248,.25)  0%, transparent 55%),
+        radial-gradient(ellipse at 85% 90%,  rgba(167,139,250,.22) 0%, transparent 55%),
+        linear-gradient(160deg, #f0f9ff 0%, #fdf4ff 60%, #ede9fe 100%);
+    }
+
+    .hero-orb {
+      width:110px; height:110px; border-radius:50%;
+      background: radial-gradient(circle at 35% 30%,#fff 0%,#e0f2fe 12%,#bae6fd 26%,#38bdf8 42%,#818cf8 60%,#a78bfa 76%,var(--pur-d) 92%,var(--pur-dd) 100%);
+      box-shadow: 0 0 48px rgba(139,92,246,.5), 0 0 90px rgba(56,189,248,.2);
+      animation: float 4s ease-in-out infinite;
+      margin-bottom: 28px; position:relative;
+    }
+    .hero-orb::before {
+      content:''; position:absolute; top:16%;left:20%;width:33%;height:18%;
+      background:rgba(255,255,255,.72);border-radius:50%;transform:rotate(-35deg);filter:blur(2px);
+    }
+    @keyframes float { 0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);} }
+
+    .hero-tag {
+      display:inline-block; background:rgba(139,92,246,.1); border:1px solid rgba(139,92,246,.2);
+      border-radius:20px; padding:5px 14px; font-size:13px; font-weight:600;
+      color:var(--pur-d); margin-bottom:18px; letter-spacing:.5px;
+    }
+    .hero-title {
+      font-size:clamp(36px,8vw,54px); font-weight:900; line-height:1.15;
+      letter-spacing:3px; margin-bottom:16px;
+      background: linear-gradient(135deg,#38bdf8,#818cf8,#a78bfa);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .hero-sub {
+      font-size:clamp(15px,4vw,18px); color:var(--muted); line-height:1.8;
+      margin-bottom:40px; max-width:400px;
+    }
+    .hero-sub b { color:var(--pur-d); -webkit-text-fill-color:var(--pur-d); }
+
+    .btn-start {
+      display:inline-block; padding:18px 44px; border-radius:50px; border:none;
+      background:linear-gradient(var(--grad)); color:#fff;
+      font-size:18px; font-weight:800; letter-spacing:1px;
+      box-shadow:0 6px 28px rgba(139,92,246,.45); cursor:pointer;
+      text-decoration:none; transition:transform .2s, box-shadow .2s;
+      animation:pulse 2.5s ease-in-out infinite;
+    }
+    .btn-start:hover { transform:translateY(-3px); box-shadow:0 10px 36px rgba(139,92,246,.6); }
+    @keyframes pulse {
+      0%,100%{ box-shadow:0 6px 28px rgba(139,92,246,.45); }
+      50%    { box-shadow:0 6px 40px rgba(139,92,246,.7), 0 0 80px rgba(56,189,248,.2); }
+    }
+
+    .hero-hint { margin-top:18px; font-size:13px; color:#c4b5fd; }
+
+    /* ── 기운 흐름 ── */
+    .flow {
+      padding:80px 0;
+      background:linear-gradient(180deg,#fdf4ff 0%,#fff 100%);
+    }
+    .section-label {
+      text-align:center; font-size:12px; font-weight:700; letter-spacing:3px;
+      color:var(--pur); text-transform:uppercase; margin-bottom:12px;
+    }
+    .section-title {
+      text-align:center; font-size:clamp(22px,5vw,30px); font-weight:800;
+      color:var(--pur-d); margin-bottom:52px; line-height:1.4;
+    }
+
+    .steps { display:flex; flex-direction:column; gap:0; }
+    .step  {
+      display:flex; gap:20px; align-items:flex-start;
+      padding:28px 0; border-bottom:1px solid rgba(139,92,246,.1);
+    }
+    .step:last-child { border-bottom:none; }
+    .step-num {
+      width:48px; height:48px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(var(--grad)); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px; font-weight:900;
+    }
+    .step-body h3 { font-size:17px; font-weight:800; color:var(--pur-d); margin-bottom:6px; }
+    .step-body p  { font-size:14px; color:var(--muted); line-height:1.75; }
+    .step-body .tag {
+      display:inline-block; background:rgba(56,189,248,.1); border-radius:12px;
+      padding:2px 10px; font-size:12px; color:#0284c7; font-weight:600; margin-top:8px;
+    }
+
+    /* ── 특징 카드 ── */
+    .features {
+      padding:80px 0;
+      background:
+        radial-gradient(ellipse at 0% 50%, rgba(56,189,248,.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 100% 50%, rgba(167,139,250,.12) 0%, transparent 60%),
+        #f8f6ff;
+    }
+    .feat-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    @media(max-width:480px){ .feat-grid { grid-template-columns:1fr; } }
+    .feat-card {
+      background:rgba(255,255,255,.9); border:1px solid rgba(139,92,246,.15);
+      border-radius:20px; padding:24px 20px;
+      box-shadow:0 4px 20px rgba(139,92,246,.08);
+    }
+    .feat-icon { font-size:32px; margin-bottom:12px; }
+    .feat-card h3 { font-size:15px; font-weight:800; color:var(--pur-d); margin-bottom:6px; }
+    .feat-card p  { font-size:13px; color:var(--muted); line-height:1.7; }
+
+    /* ── 하단 CTA ── */
+    .cta {
+      padding:100px 24px;
+      text-align:center;
+      background:linear-gradient(160deg,#ede9fe 0%,#e0f2fe 100%);
+    }
+    .cta-emoji { font-size:56px; margin-bottom:20px; animation:float 3.5s ease-in-out infinite; }
+    .cta h2 {
+      font-size:clamp(24px,6vw,36px); font-weight:900; margin-bottom:14px;
+      background:linear-gradient(135deg,var(--pur-d),#0284c7);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .cta p { font-size:16px; color:var(--muted); margin-bottom:36px; line-height:1.75; }
+
+    /* ── 푸터 ── */
+    footer {
+      text-align:center; padding:24px; font-size:12px; color:#c4b5fd;
+      background:#f8f6ff;
+    }
+    footer a { color:#c4b5fd; text-underline-offset:3px; }
+  </style>
+</head>
+<body>
+
+<div id="bg-hands"></div>
+
+<!-- ── 히어로 ── -->
+<section class="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-tag">✨ 무료 · 가입만 하면 OK</div>
+  <h1 class="hero-title">기받아가요</h1>
+  <p class="hero-sub">
+    하루에 한 번, <b>자랑글을 올리고 기운을 담아요.</b><br>
+    그 기운이 낯선 누군가에게 배달됩니다 🙏
+  </p>
+  <a class="btn-start" href="https://shwach.github.io/ki-badagayo/">🙏 기 받으러 가기</a>
+  <p class="hero-hint">로그인 후 바로 시작 · 별도 설치 불필요</p>
+</section>
+
+<!-- ── 사용법 ── -->
+<section class="flow">
+  <div class="inner">
+    <div class="section-label">How it works</div>
+    <h2 class="section-title">이렇게 사용해요</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>매일 기를 충전해요</h3>
+          <p>하루에 한 번, 구슬을 탭하면 기 1개가 충전돼요.<br>매일 접속할수록 기가 쌓여요.</p>
+          <span class="tag">⏰ 하루 1회</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>자랑글에 기를 담아요</h3>
+          <p>오늘 있었던 자랑스러운 일을 글로 써요.<br>보유한 기를 담아서 올리면 다른 사람에게 배달돼요.</p>
+          <span class="tag">✏️ 300자 이내</span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>배달된 기를 받아가요</h3>
+          <p>누군가의 자랑글이 나에게 배달돼요.<br>읽고 마음에 들면 기를 1개 가져갈 수 있어요.</p>
+          <span class="tag">🙏 하루 1회 수령</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 특징 ── -->
+<section class="features">
+  <div class="inner">
+    <div class="section-label">Features</div>
+    <h2 class="section-title">기받아가요만의 특징</h2>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🎲</div>
+        <h3>랜덤 배달</h3>
+        <p>어떤 글이 올지 몰라요. 매일 새로운 기운이 찾아와요.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <h3>익명 커뮤니티</h3>
+        <p>닉네임만으로 참여해요. 부담 없이 자랑할 수 있어요.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <h3>설치 불필요</h3>
+        <p>웹에서 바로 실행돼요. 앱스토어 없이도 사용 가능해요.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌱</div>
+        <h3>긍정 에너지</h3>
+        <p>스팸·욕설 필터로 건강한 커뮤니티를 유지해요.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 하단 CTA ── -->
+<section class="cta">
+  <div class="cta-emoji">🙏</div>
+  <h2>오늘의 기를 받아가세요</h2>
+  <p>자랑할 일이 없어도 괜찮아요.<br>누군가의 기운을 받는 것만으로도 충분해요.</p>
+  <a class="btn-start" href="https://shwach.github.io/ki-badagayo/">지금 시작하기 →</a>
+</section>
+
+<footer>
+  © 2025 기받아가요 &nbsp;·&nbsp;
+  <a href="https://shwach.github.io/ki-badagayo/privacy/">개인정보처리방침</a>
+</footer>
+
+<script>
+  // 배경 🙏 파티클
+  (function() {
+    const w = document.getElementById('bg-hands');
+    for (let i = 0; i < 10; i++) {
+      const s = document.createElement('span');
+      s.className = 'hand';
+      s.textContent = '🙏';
+      const sz = 16 + Math.random() * 22;
+      s.style.cssText = `left:${Math.random()*96}%;--sz:${sz}px;--d:${12+Math.random()*14}s;--dl:-${Math.random()*14}s;`;
+      w.appendChild(s);
+    }
+  })();
+</script>
+</body>
+</html>
