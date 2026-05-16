@@ -1,5 +1,5 @@
-const CACHE = 'ki-badagayo-v3';
-const ASSETS = ['/ki-badagayo/', '/ki-badagayo/index.html', '/ki-badagayo/manifest.json', '/ki-badagayo/privacy/', '/ki-badagayo/privacy/index.html'];
+const CACHE = 'ki-badagayo-v4';
+const ASSETS = ['/', '/index.html', '/manifest.json', '/privacy/', '/privacy/index.html'];
 
 self.addEventListener('install', e =>
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)))
