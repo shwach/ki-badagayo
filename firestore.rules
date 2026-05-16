@@ -8,7 +8,8 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == uid;
       allow update: if request.auth != null && request.auth.uid == uid
                     && request.resource.data.diff(resource.data).affectedKeys()
-                       .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL','lastClaimDate']);
+                       .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL','lastClaimDate'])
+                    || request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
     }
 
     // 자랑글: 생성만 허용 (수정/삭제 불가)
@@ -20,7 +21,8 @@ service cloud.firestore {
                     && request.resource.data.content.size() > 0
                     && request.resource.data.content.size() <= 300
                     && request.resource.data.kiPool  >= 1
-                    && request.resource.data.kiPool  == request.resource.data.kiRemaining;
+                    && request.resource.data.kiPool  == request.resource.data.kiRemaining
+                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.banned != true;
       // kiRemaining 차감은 트랜잭션으로만 허용
       allow update: if request.auth != null
                     && request.resource.data.diff(resource.data).affectedKeys()

@@ -768,7 +768,7 @@ async function loadFeed() {
 
     const all = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
-      .filter(p => p.authorId !== me.uid);
+      .filter(p => p.authorId !== me.uid && !p.authorBanned);
 
     // 일반 유저 글 우선, 없으면 관리자 글
     const userPosts  = all.filter(p => !p.isAdmin);
@@ -924,6 +924,8 @@ async function submitPost() {
   const content = writeArea.value.trim();
   if (!content || !uData || uData.kiBalance < kiPick || kiPick < 1) return;
 
+  if (uData.banned) { toast('🚫 글쓰기 권한이 없어요'); return; }
+
   const filterMsg = checkContent(content);
   if (filterMsg) { toast('🚫 ' + filterMsg); return; }
 
@@ -968,7 +970,7 @@ async function loadTopPosts() {
 
     const posts = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
-      .filter(p => !p.isAdmin)
+      .filter(p => !p.isAdmin && !p.authorBanned)
       .map(p => ({ ...p, kiClaimed: (p.kiPool || 0) - (p.kiRemaining || 0) }))
       .filter(p => p.kiClaimed > 0)
       .sort((a, b) => b.kiClaimed - a.kiClaimed)

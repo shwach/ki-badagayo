@@ -89,6 +89,22 @@
                   transition:background .15s; white-space:nowrap; }
     .btn-delete:hover { background:#fee2e2; }
 
+    /* 회원 목록 */
+    .user-item { padding:14px 0; border-bottom:1px solid #e0f2fe; display:flex; align-items:center; gap:10px; }
+    .user-item:last-child { border-bottom:none; }
+    .user-info { flex:1; min-width:0; }
+    .user-name { font-size:14px; font-weight:700; color:#0c4a6e; }
+    .user-meta { font-size:12px; color:#7dd3fc; margin-top:2px; }
+    .user-banned { font-size:11px; color:#ef4444; font-weight:700; margin-left:6px; }
+    .btn-ban   { background:none; border:1px solid #fca5a5; border-radius:16px;
+                 padding:4px 12px; font-size:12px; color:#ef4444; cursor:pointer;
+                 transition:background .15s; white-space:nowrap; flex-shrink:0; }
+    .btn-ban:hover   { background:#fee2e2; }
+    .btn-unban { background:none; border:1px solid #bae6fd; border-radius:16px;
+                 padding:4px 12px; font-size:12px; color:#0ea5e9; cursor:pointer;
+                 transition:background .15s; white-space:nowrap; flex-shrink:0; }
+    .btn-unban:hover { background:#e0f2fe; }
+
     /* 토스트 */
     #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
              background:rgba(12,74,110,.92); color:#fff; padding:10px 22px;
@@ -159,6 +175,12 @@
       <div id="post-list"><div class="empty-posts">불러오는 중...</div></div>
     </div>
 
+    <!-- 회원 목록 -->
+    <div class="card">
+      <h2>👥 회원 목록</h2>
+      <div id="user-list"><div class="empty-posts">불러오는 중...</div></div>
+    </div>
+
   </div>
 </div>
 
@@ -221,6 +243,7 @@ auth.onAuthStateChanged(user => {
 
   show('sec-admin');
   loadPosts();
+  loadUsers();
 });
 
 function show(id) {
@@ -280,6 +303,75 @@ async function post() {
     btn.disabled = false;
     updateBtn();
   }
+}
+
+/* ─── 회원 목록 ─── */
+async function loadUsers() {
+  const list = document.getElementById('user-list');
+  list.innerHTML = '<div class="empty-posts">불러오는 중...</div>';
+
+  try {
+    const snap = await db.collection('users').orderBy('kiBalance', 'desc').limit(50).get();
+
+    if (snap.empty) {
+      list.innerHTML = '<div class="empty-posts">회원이 없어요.</div>';
+      return;
+    }
+
+    list.innerHTML = '';
+    snap.docs.forEach(d => {
+      const u = d.data();
+      const isBanned = u.banned === true;
+      const item = document.createElement('div');
+      item.className = 'user-item';
+      item.id = `user-${d.id}`;
+      item.innerHTML = `
+        <div class="user-info">
+          <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned">🚫 차단됨</span>' : ''}</div>
+          <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
+        </div>
+        ${isBanned
+          ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`
+          : `<button class="btn-ban"   onclick="banUser('${d.id}')">차단</button>`
+        }`;
+      list.appendChild(item);
+    });
+  } catch(e) {
+    list.innerHTML = `<div class="empty-posts">오류: ${esc(e.message)}</div>`;
+  }
+}
+
+/* ─── 회원 차단 ─── */
+async function banUser(uid) {
+  if (!confirm('이 회원을 차단할까요? 자랑글을 쓸 수 없고 기존 글도 배달되지 않습니다.')) return;
+  try {
+    const batch = db.batch();
+    batch.update(db.collection('users').doc(uid), { banned: true });
+
+    // 해당 유저의 글 전체에 authorBanned 표시
+    const posts = await db.collection('posts').where('authorId', '==', uid).get();
+    posts.forEach(d => batch.update(d.ref, { authorBanned: true }));
+
+    await batch.commit();
+    toast('차단됐어요');
+    loadUsers();
+  } catch(e) { toast('오류: ' + e.message); }
+}
+
+async function unbanUser(uid) {
+  if (!confirm('차단을 해제할까요?')) return;
+  try {
+    const batch = db.batch();
+    batch.update(db.collection('users').doc(uid), { banned: false });
+
+    // 해당 유저의 글 authorBanned 해제
+    const posts = await db.collection('posts').where('authorId', '==', uid).get();
+    posts.forEach(d => batch.update(d.ref, { authorBanned: false }));
+
+    await batch.commit();
+    toast('차단 해제됐어요');
+    loadUsers();
+  } catch(e) { toast('오류: ' + e.message); }
 }
 
 /* ─── 자랑글 삭제 ─── */
