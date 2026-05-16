@@ -301,12 +301,20 @@
     .btn-feed-claim.spent{ background:#f1f5f9; color:#cbd5e1; cursor:default; }
     .feed-empty { text-align:center; padding:18px 0; font-size:13px; color:var(--muted); }
 
-    /* ── 자랑글 탭 오픈예정 ── */
-    .coming-soon { display:flex; flex-direction:column; align-items:center;
-                   justify-content:center; padding:60px 20px; text-align:center; }
-    .coming-soon .cs-icon { font-size:52px; margin-bottom:16px; }
-    .coming-soon h2 { font-size:18px; font-weight:800; color:var(--sky-d); margin-bottom:8px; }
-    .coming-soon p  { font-size:14px; color:var(--muted); line-height:1.75; }
+    /* ── 자랑글 탭 랭킹 ── */
+    .rank-header { width:100%; font-size:19px; font-weight:800; color:var(--pur-d);
+                   letter-spacing:1px; margin-bottom:16px; }
+    .rank-card   { width:100%; background:var(--card); border:1px solid var(--cb);
+                   border-radius:18px; box-shadow:0 3px 18px rgba(139,92,246,.09);
+                   padding:16px 18px; margin-bottom:10px; display:flex; gap:14px; align-items:flex-start; }
+    .rank-num    { font-size:22px; min-width:32px; text-align:center; line-height:1.4; flex-shrink:0; }
+    .rank-body   { flex:1; min-width:0; }
+    .rank-text   { font-size:14px; color:var(--text); line-height:1.65; white-space:pre-wrap;
+                   word-break:break-all; margin-bottom:8px;
+                   display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+    .rank-stat   { font-size:12px; color:var(--muted); display:flex; gap:10px; }
+    .rank-stat .ki-got  { color:var(--pur-d); font-weight:700; }
+    .rank-empty  { text-align:center; padding:52px 0; font-size:14px; color:var(--muted); line-height:1.75; }
   </style>
 </head>
 <body>
@@ -331,6 +339,9 @@
   </button>
   <div class="login-or">또는</div>
   <button class="btn-email" onclick="showPage('pg-email')">✉️ 이메일로 시작하기</button>
+  <p style="margin-top:28px;font-size:12px;color:var(--muted)">
+    <a href="privacy/" style="color:var(--muted);text-decoration:underline;text-underline-offset:3px">개인정보처리방침</a>
+  </p>
 </div>
 
 <!-- ── 이메일 로그인/회원가입 ── -->
@@ -354,6 +365,9 @@
       <input class="auth-field" id="su-pw" type="password" placeholder="비밀번호 (6자 이상)" autocomplete="new-password">
       <button class="btn-auth" onclick="emailSignUp()">가입하기</button>
     </div>
+    <p style="margin-top:18px;text-align:center;font-size:12px;color:var(--muted)">
+      <a href="privacy/" style="color:var(--muted);text-decoration:underline;text-underline-offset:3px">개인정보처리방침</a>
+    </p>
   </div>
 </div>
 
@@ -414,11 +428,8 @@
 
     <!-- 자랑글 탭 -->
     <div id="tab-post" class="tab">
-      <div class="coming-soon">
-        <div class="cs-icon">🔮</div>
-        <h2>추후 오픈 예정</h2>
-        <p>자랑글 커뮤니티 기능을<br>열심히 준비 중이에요.<br>조금만 기다려 주세요 🙏</p>
-      </div>
+      <div class="rank-header">🏆 기 많이 받은 자랑글</div>
+      <div id="top-posts"><div class="post-loading">불러오는 중...</div></div>
     </div>
 
     <!-- 쓰기 탭 -->
@@ -726,6 +737,7 @@ function switchTab(name) {
   document.getElementById(`tab-${name}`).classList.add('active');
   document.getElementById(`tbtn-${name}`).classList.add('active');
   if (name === 'write') { updateKiPickDisplay(); updateSubmitBtn(); }
+  if (name === 'post')  { loadTopPosts(); }
 }
 
 /* ─── 홈탭 자랑글 피드 로드 ─── */
@@ -763,7 +775,7 @@ async function loadFeed() {
     div.className = 'feed-card';
     div.innerHTML = `
       <div class="feed-top">
-        <span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span>
+        ${p.isAdmin ? '' : `<span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span>`}
       </div>
       <div class="feed-body">${esc(p.content)}</div>
       <button id="claim-${p.id}"
@@ -874,16 +886,55 @@ async function submitPost() {
     });
     await batch.commit();
 
+    const usedKi = kiPick;
     uData.kiBalance = newBal;
     kiPick = 1;
     writeArea.value = '';
     document.getElementById('char-cnt').textContent = '0';
     renderKi(); updateKiPickDisplay();
     showFx('📮');
-    toast(`자랑글을 올렸어요! -${kiPick + (newBal - (uData.kiBalance))}기`);
+    toast(`자랑글을 올렸어요! -${usedKi}기`);
     switchTab('home');
   } catch(e) { toast('오류: ' + e.message); }
   finally { btn.disabled = false; updateSubmitBtn(); }
+}
+
+/* ─── 자랑글 랭킹 ─── */
+async function loadTopPosts() {
+  const container = document.getElementById('top-posts');
+  container.innerHTML = '<div class="post-loading">불러오는 중...</div>';
+
+  try {
+    const snap = await db.collection('posts').get();
+
+    const posts = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(p => !p.isAdmin)
+      .map(p => ({ ...p, kiClaimed: (p.kiPool || 0) - (p.kiRemaining || 0) }))
+      .filter(p => p.kiClaimed > 0)
+      .sort((a, b) => b.kiClaimed - a.kiClaimed)
+      .slice(0, 10);
+
+    if (posts.length === 0) {
+      container.innerHTML = '<div class="rank-empty">아직 기를 받아간 자랑글이 없어요 🙏<br>첫 번째 주인공이 되어보세요!</div>';
+      return;
+    }
+
+    const medals = ['🥇','🥈','🥉'];
+    container.innerHTML = posts.map((p, i) => `
+      <div class="rank-card">
+        <div class="rank-num">${medals[i] || `${i+1}`}</div>
+        <div class="rank-body">
+          <div class="rank-text">${esc(p.content)}</div>
+          <div class="rank-stat">
+            <span class="ki-got">🙏 ${p.kiClaimed}기 전달됨</span>
+            <span>잔여 ${p.kiRemaining}기</span>
+          </div>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    container.innerHTML = '<div class="rank-empty">불러오기 실패. 잠시 후 다시 시도해주세요.</div>';
+  }
 }
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>투명 아이콘 생성기</title>
+  <style>
+    body { background:#444; display:flex; flex-direction:column; align-items:center; padding:40px; gap:20px; font-family:sans-serif; color:#fff; }
+    canvas { border-radius:22%; border:1px solid rgba(255,255,255,.2); background:transparent; }
+    button { padding:12px 28px; border-radius:30px; border:none; background:linear-gradient(135deg,#38bdf8,#a78bfa); color:#fff; font-size:16px; font-weight:700; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <h2>투명 배경 아이콘 생성기</h2>
+  <canvas id="c192" width="192" height="192"></canvas>
+  <canvas id="c512" width="512" height="512"></canvas>
+  <button onclick="downloadAll()">⬇️ 아이콘 다운로드</button>
+  <script>
+    function drawOrb(canvas) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      const cx = w/2, cy = h/2, r = w*0.41;
+
+      // 배경 투명 (fillRect 없음)
+
+      // 외부 글로우
+      const glow = ctx.createRadialGradient(cx,cy,r*.1,cx,cy,r*1.65);
+      glow.addColorStop(0, 'rgba(168,85,247,.3)');
+      glow.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = glow;
+      ctx.beginPath(); ctx.arc(cx,cy,r*1.65,0,Math.PI*2); ctx.fill();
+
+      // 오브 본체
+      const grad = ctx.createRadialGradient(cx-r*.22,cy-r*.22,r*.04,cx,cy,r);
+      grad.addColorStop(0,    '#f5eeff');
+      grad.addColorStop(0.17, '#e0f2fe');
+      grad.addColorStop(0.38, '#7dd3fc');
+      grad.addColorStop(0.56, '#38bdf8');
+      grad.addColorStop(0.72, '#818cf8');
+      grad.addColorStop(0.88, '#a78bfa');
+      grad.addColorStop(1,    '#7c3aed');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+
+      // 하이라이트
+      ctx.save();
+      ctx.translate(cx-r*.18, cy-r*.22);
+      ctx.rotate(-0.58);
+      const hl = ctx.createRadialGradient(0,0,0,0,0,r*.33);
+      hl.addColorStop(0, 'rgba(255,255,255,.78)');
+      hl.addColorStop(.6,'rgba(255,255,255,.2)');
+      hl.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = hl;
+      ctx.beginPath(); ctx.ellipse(0,0,r*.33,r*.18,0,0,Math.PI*2); ctx.fill();
+      ctx.restore();
+    }
+
+    drawOrb(document.getElementById('c192'));
+    drawOrb(document.getElementById('c512'));
+
+    function download(id, filename) {
+      const a = document.createElement('a');
+      a.download = filename;
+      a.href = document.getElementById(id).toDataURL('image/png');
+      a.click();
+    }
+
+    function downloadAll() {
+      download('c192','icon-192.png');
+      setTimeout(()=>download('c512','icon-512.png'), 300);
+    }
+  </script>
+</body>
+</html>
