@@ -1,11 +1,1 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls", "delegate_permission/common.get_login_creds"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.shwach.kibadagayo",
-    "sha256_cert_fingerprints": [
-      "1B:DB:48:1E:29:FA:AE:F8:A7:EC:E4:6D:CF:B6:7D:4F:C2:AA:E3:66:7B:5E:FB:D9:D5:C5:5D:83:87:C5:FE:F0",
-      "A0:33:74:C4:A6:85:41:E4:7B:A3:CB:A6:C5:2A:78:66:AD:F7:AF:22:AC:1E:CE:EC:DE:C7:82:39:B8:F2:95:1F"
-    ]
-  }
-}]
+[{"relation":["delegate_permission/common.handle_all_urls"],"target":{"namespace":"android_app","package_name":"com.shwach.kibadagayo","sha256_cert_fingerprints":["1B:DB:48:1E:29:FA:AE:F8:A7:EC:E4:6D:CF:B6:7D:4F:C2:AA:E3:66:7B:5E:FB:D9:D5:C5:5D:83:87:C5:FE:F0"]}}]
