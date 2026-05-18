@@ -277,12 +277,13 @@
                    letter-spacing:1px; margin-bottom:16px; }
     .rank-card   { width:100%; background:var(--card); border:1px solid var(--cb);
                    border-radius:18px; box-shadow:0 3px 18px rgba(139,92,246,.09);
-                   padding:16px 18px; margin-bottom:10px; display:flex; gap:14px; align-items:flex-start; }
-    .rank-num    { font-size:22px; min-width:32px; text-align:center; line-height:1.4; flex-shrink:0; }
-    .rank-body   { flex:1; min-width:0; }
+                   padding:16px 18px; margin-bottom:10px; display:flex; gap:14px; align-items:center;
+                   min-height:80px; box-sizing:border-box; }
+    .rank-num    { font-size:22px; min-width:36px; text-align:center; flex-shrink:0; }
+    .rank-body   { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
     .rank-text   { font-size:14px; color:var(--text); line-height:1.65; white-space:pre-wrap;
-                   word-break:break-all; margin-bottom:8px;
-                   display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+                   word-break:break-all; margin-bottom:6px;
+                   display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
     .rank-stat   { font-size:12px; color:var(--muted); display:flex; gap:10px; }
     .rank-stat .ki-got  { color:var(--pur-d); font-weight:700; }
     .rank-empty  { text-align:center; padding:52px 0; font-size:14px; color:var(--muted); line-height:1.75; }
@@ -817,7 +818,6 @@ async function loadTopPosts() {
           <div class="rank-text">${esc(p.content)}</div>
           <div class="rank-stat">
             <span class="ki-got">🙏 ${p.kiClaimed}기 전달됨</span>
-            <span>잔여 ${p.kiRemaining}기</span>
           </div>
         </div>
       </div>`).join('');
