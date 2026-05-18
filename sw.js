@@ -1,4 +1,4 @@
-const CACHE = 'ki-badagayo-v4';
+const CACHE = 'ki-badagayo-v5';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/privacy/', '/privacy/index.html'];
 
 self.addEventListener('install', e =>
