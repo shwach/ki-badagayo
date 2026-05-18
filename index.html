@@ -798,7 +798,7 @@ async function loadTopPosts() {
 
     const posts = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
-      .filter(p => !p.isAdmin && !p.authorBanned)
+      .filter(p => !p.authorBanned)
       .map(p => ({ ...p, kiClaimed: (p.kiPool || 0) - (p.kiRemaining || 0) }))
       .filter(p => p.kiClaimed > 0)
       .sort((a, b) => b.kiClaimed - a.kiClaimed)
