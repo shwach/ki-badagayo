@@ -136,6 +136,23 @@
     .avatar    { width:30px;height:30px;border-radius:50%;object-fit:cover;border:1.5px solid var(--pur-ll); }
     .btn-out   { background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;
                  padding:4px 8px;border-radius:12px; }
+    .btn-login-hdr { background:linear-gradient(var(--grad));border:none;color:#fff;
+                     font-size:12px;font-weight:700;cursor:pointer;padding:6px 14px;
+                     border-radius:20px; }
+
+    /* ── 로그인 모달 ── */
+    .modal-backdrop { position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;
+                      backdrop-filter:blur(4px); }
+    .modal-box { position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+                 background:#fff;border-radius:28px;padding:36px 28px;z-index:401;
+                 width:min(340px,90vw);text-align:center;
+                 box-shadow:0 20px 60px rgba(139,92,246,.3); }
+    .modal-close { position:absolute;top:14px;right:16px;background:none;border:none;
+                   font-size:20px;color:var(--muted);cursor:pointer; }
+    .modal-emoji { font-size:48px;margin-bottom:14px; }
+    .modal-title { font-size:18px;font-weight:800;color:var(--pur-d);margin-bottom:8px; }
+    .modal-sub   { font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7; }
+    .modal-btns  { display:flex;flex-direction:column;gap:10px; }
 
     .tab { display:none; flex-direction:column; align-items:center; width:100%; }
     .tab.active { display:flex; }
@@ -402,7 +419,26 @@
     <div class="user-row">
       <span class="user-name" id="hdr-name"></span>
       <img class="avatar" id="hdr-avatar" src="" alt="" style="display:none">
-      <button class="btn-out" onclick="signOut()">로그아웃</button>
+      <button class="btn-login-hdr" id="hdr-login-btn" style="display:none" onclick="showLoginModal()">로그인</button>
+      <button class="btn-out" id="btn-out" style="display:none" onclick="signOut()">로그아웃</button>
+    </div>
+  </div>
+
+  <!-- 로그인 모달 -->
+  <div id="login-modal" style="display:none">
+    <div class="modal-backdrop" onclick="closeLoginModal()"></div>
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      <div class="modal-emoji">🙏</div>
+      <div class="modal-title">로그인하고 기를 받아가세요</div>
+      <div class="modal-sub">하루 한 번 기운을 충전하고<br>자랑글로 나눠보세요</div>
+      <div class="modal-btns">
+        <button class="btn-google" onclick="signIn();closeLoginModal()">
+          <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Google로 시작하기
+        </button>
+        <button class="btn-email" onclick="closeLoginModal();showPage('pg-email')">✉️ 이메일로 시작하기</button>
+      </div>
     </div>
   </div>
 
@@ -637,7 +673,7 @@ auth.onAuthStateChanged(async user => {
     showApp();
   } else {
     me = null; uData = null;
-    auth.signInAnonymously().catch(() => showPage('pg-login'));
+    showGuestMode();
   }
 });
 
@@ -665,12 +701,45 @@ function showApp() {
   const av = document.getElementById('hdr-avatar');
   if (uData.photoURL) { av.src = uData.photoURL; av.style.display = ''; }
   else { av.src = ''; av.style.display = 'none'; }
-  document.querySelector('.btn-out').style.display = me.isAnonymous ? 'none' : '';
+  document.getElementById('hdr-login-btn').style.display = 'none';
+  document.getElementById('btn-out').style.display = '';
   renderKi();
   startTick();
   loadFeed();
   switchTab('home');
   showPage('pg-app');
+}
+
+/* ─── 게스트 모드 ─── */
+function showGuestMode() {
+  document.getElementById('hdr-name').textContent = '';
+  const av = document.getElementById('hdr-avatar');
+  av.src = ''; av.style.display = 'none';
+  document.getElementById('hdr-login-btn').style.display = '';
+  document.getElementById('btn-out').style.display = 'none';
+
+  document.getElementById('ki-num').textContent = '-';
+  document.getElementById('orb-row').innerHTML = '<span class="orb-empty">로그인하면 기를 받을 수 있어요 🙏</span>';
+  document.getElementById('kp-hint').textContent = '현재 보유: -';
+
+  document.getElementById('main-orb').className = 'main-orb';
+  document.getElementById('orb-emoji').textContent = '🙏';
+  document.getElementById('daily-btn').className = 'btn-main on';
+  document.getElementById('daily-btn').innerHTML = '🙏 로그인하고 기 받기';
+  document.getElementById('timer-box').style.display = 'none';
+  document.getElementById('ready-msg').style.display = 'none';
+
+  loadFeed();
+  switchTab('home');
+  showPage('pg-app');
+}
+
+/* ─── 로그인 모달 ─── */
+function showLoginModal() {
+  document.getElementById('login-modal').style.display = '';
+}
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
 }
 
 /* ─── Ki 렌더 ─── */
@@ -727,6 +796,7 @@ function setCanDay(v) {
 
 /* ─── 일일 기 받기 ─── */
 async function collectDailyKi() {
+  if (!me) { showLoginModal(); return; }
   if (!canDay || dayBusy) return;
   dayBusy = true;
   if (navigator.vibrate) navigator.vibrate([25,15,55]);
@@ -751,7 +821,10 @@ function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById(`tab-${name}`).classList.add('active');
   document.getElementById(`tbtn-${name}`).classList.add('active');
-  if (name === 'write') { updateKiPickDisplay(); updateSubmitBtn(); }
+  if (name === 'write') {
+    if (!me) { showLoginModal(); switchTab('home'); return; }
+    updateKiPickDisplay(); updateSubmitBtn();
+  }
   if (name === 'post')  { loadTopPosts(); }
 }
 
@@ -769,7 +842,7 @@ async function loadFeed() {
 
     const all = snap.docs
       .map(d => ({ id: d.id, ...d.data() }))
-      .filter(p => p.authorId !== me.uid && !p.authorBanned);
+      .filter(p => (!me || p.authorId !== me.uid) && !p.authorBanned);
 
     // 일반 유저 글 우선, 없으면 관리자 글
     const userPosts  = all.filter(p => !p.isAdmin);
@@ -783,7 +856,7 @@ async function loadFeed() {
 
     // 랜덤으로 1개 선택
     const p = pool[Math.floor(Math.random() * pool.length)];
-    const alreadyClaimedToday = uData.lastClaimDate === today();
+    const alreadyClaimedToday = me && uData.lastClaimDate === today();
 
     wrap.style.display = 'block';
     const div = document.createElement('div');
@@ -791,12 +864,15 @@ async function loadFeed() {
     div.innerHTML = `
       ${p.isAdmin ? '' : `<div class="feed-top"><span class="feed-badge">🔮 ${p.kiRemaining}기 남음</span></div>`}
       <div class="feed-body">${esc(p.content)}</div>
-      <button id="claim-${p.id}"
-        class="btn-feed-claim ${alreadyClaimedToday ? 'done' : 'on'}"
-        onclick="claimKi('${p.id}')"
-        ${alreadyClaimedToday ? 'disabled' : ''}>
-        ${alreadyClaimedToday ? '✅ 오늘 기를 받았어요' : '🙏 이 글에서 기 받기 (+1기)'}
-      </button>`;
+      ${!me
+        ? `<button class="btn-feed-claim on" onclick="showLoginModal()">🙏 로그인하고 기 받기</button>`
+        : `<button id="claim-${p.id}"
+            class="btn-feed-claim ${alreadyClaimedToday ? 'done' : 'on'}"
+            onclick="claimKi('${p.id}')"
+            ${alreadyClaimedToday ? 'disabled' : ''}>
+            ${alreadyClaimedToday ? '✅ 오늘 기를 받았어요' : '🙏 이 글에서 기 받기 (+1기)'}
+          </button>`
+      }`;
     feed.appendChild(div);
   } catch(e) {
     wrap.style.display = 'none';
