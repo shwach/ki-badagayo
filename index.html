@@ -612,7 +612,7 @@ auth.onAuthStateChanged(async user => {
     showApp();
   } else {
     me = null; uData = null;
-    showPage('pg-login');
+    auth.signInAnonymously().catch(() => showPage('pg-login'));
   }
 });
 
@@ -640,6 +640,7 @@ function showApp() {
   const av = document.getElementById('hdr-avatar');
   if (uData.photoURL) { av.src = uData.photoURL; av.style.display = ''; }
   else { av.src = ''; av.style.display = 'none'; }
+  document.querySelector('.btn-out').style.display = me.isAnonymous ? 'none' : '';
   renderKi();
   startTick();
   loadFeed();
