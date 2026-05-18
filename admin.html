@@ -91,13 +91,20 @@
     .btn-delete:hover { background:#fee2e2; }
 
     /* ── 회원 목록 ── */
-    .user-item { padding:14px 0; border-bottom:1px solid #e0f2fe;
-                 display:flex; align-items:center; gap:10px; }
+    .user-item { padding:14px 0; border-bottom:1px solid #e0f2fe; }
     .user-item:last-child { border-bottom:none; }
-    .user-info { flex:1; min-width:0; }
+    .user-item-header { display:flex; align-items:center; gap:10px; }
+    .user-info { flex:1; min-width:0; cursor:pointer; }
+    .user-info:hover .user-name { text-decoration:underline; }
     .user-name { font-size:14px; font-weight:700; color:#0c4a6e; }
     .user-meta { font-size:12px; color:#7dd3fc; margin-top:2px; }
+    .user-uid  { font-size:10px; color:#94a3b8; font-family:monospace; margin-top:2px; }
     .user-banned { font-size:11px; color:#ef4444; font-weight:700; margin-left:6px; }
+    .user-posts { margin-top:10px; padding-left:10px; border-left:2px solid #e0f2fe; display:none; }
+    .user-post-item { padding:7px 0; border-bottom:1px solid #f0f9ff; }
+    .user-post-item:last-child { border-bottom:none; }
+    .user-post-meta { font-size:11px; color:#7dd3fc; margin-bottom:3px; }
+    .user-post-text { font-size:13px; color:#0c4a6e; line-height:1.5; white-space:pre-wrap; word-break:break-all; }
     .btn-ban   { background:none; border:1px solid #fca5a5; border-radius:16px;
                  padding:4px 12px; font-size:12px; color:#ef4444; cursor:pointer;
                  transition:background .15s; white-space:nowrap; flex-shrink:0; }
@@ -356,16 +363,40 @@ async function loadUsers() {
       const item = document.createElement('div');
       item.className = 'user-item'; item.id = `user-${d.id}`;
       item.innerHTML = `
-        <div class="user-info">
-          <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned"> 🚫 차단됨</span>' : ''}</div>
-          <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
+        <div class="user-item-header">
+          <div class="user-info" onclick="toggleUserPosts('${d.id}')">
+            <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned"> 🚫 차단됨</span>' : ''}</div>
+            <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
+            <div class="user-uid">${d.id}</div>
+          </div>
+          ${isBanned
+            ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`
+            : `<button class="btn-ban"   onclick="banUser('${d.id}')">차단</button>`}
         </div>
-        ${isBanned
-          ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`
-          : `<button class="btn-ban"   onclick="banUser('${d.id}')">차단</button>`}`;
+        <div class="user-posts" id="uposts-${d.id}"></div>`;
       list.appendChild(item);
     });
   } catch(e) { list.innerHTML = `<div class="empty-msg">오류: ${esc(e.message)}</div>`; }
+}
+
+/* ─── 회원 글 목록 토글 ─── */
+async function toggleUserPosts(uid) {
+  const el = document.getElementById(`uposts-${uid}`);
+  if (el.style.display === 'block') { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<div class="empty-msg" style="padding:8px;font-size:12px">불러오는 중...</div>';
+  try {
+    const snap = await db.collection('posts').where('authorId', '==', uid).orderBy('createdAt', 'desc').get();
+    if (snap.empty) { el.innerHTML = '<div class="empty-msg" style="padding:8px;font-size:12px">글이 없어요.</div>'; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const p = d.data();
+      const ts = p.createdAt?.toDate?.()?.toLocaleString('ko-KR') || '';
+      return `<div class="user-post-item">
+        <div class="user-post-meta">🔮 ${p.kiRemaining}/${p.kiPool}기 · ${ts}</div>
+        <div class="user-post-text">${esc(p.content)}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = `<div class="empty-msg" style="padding:8px;font-size:12px">오류: ${esc(e.message)}</div>`; }
 }
 
 /* ─── 차단 / 해제 ─── */
