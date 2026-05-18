@@ -82,6 +82,7 @@
     .post-meta { display:flex; align-items:center; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
     .post-meta .who { font-size:12px; color:#7dd3fc; }
     .post-meta .rem { font-size:12px; color:#0ea5e9; font-weight:600; margin-left:auto; }
+    .post-uid  { font-size:10px; color:#94a3b8; margin-bottom:4px; font-family:monospace; }
     .post-text { font-size:14px; color:#0c4a6e; line-height:1.6; white-space:pre-wrap; word-break:break-all; }
     .post-date { font-size:11px; color:#bae6fd; margin-top:4px; }
     .btn-delete { background:none; border:1px solid #fca5a5; border-radius:16px;
@@ -320,6 +321,7 @@ async function loadPosts() {
           <span class="rem">🔮 ${p.kiRemaining}/${p.kiPool}기</span>
           <button class="btn-delete" onclick="deletePost('${d.id}')">🗑 삭제</button>
         </div>
+        <div class="post-uid">UID: ${esc(p.authorId)}</div>
         <div class="post-text">${esc(p.content)}</div>
         <div class="post-date">${ts}</div>`;
       list.appendChild(item);
