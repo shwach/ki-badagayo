@@ -354,7 +354,7 @@ async function loadUsers() {
   const list = document.getElementById('user-list');
   list.innerHTML = '<div class="empty-msg">불러오는 중...</div>';
   try {
-    const snap = await db.collection('users').orderBy('kiBalance', 'desc').limit(50).get();
+    const snap = await db.collection('users').orderBy('lastVisit', 'desc').limit(50).get();
     if (snap.empty) { list.innerHTML = '<div class="empty-msg">회원이 없어요.</div>'; return; }
 
     document.getElementById('user-count').textContent = `총 ${snap.size}명`;
