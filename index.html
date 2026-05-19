@@ -229,8 +229,8 @@
                   background:linear-gradient(135deg,#38bdf8,#a78bfa);
                   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
     .ready-msg  { margin-top:18px;font-size:15px;color:var(--pur); }
-    .btn-test   { margin-top:14px;padding:8px 20px;border-radius:20px;border:1.5px dashed #f59e0b;background:transparent;color:#f59e0b;font-size:12px;cursor:pointer;letter-spacing:.3px; }
-    .btn-test.active { background:#fef3c7;color:#92400e;border-color:#d97706; }
+    .btn-admin-reset { margin-top:14px;padding:9px 24px;border-radius:22px;border:1.5px solid rgba(251,146,60,.55);background:transparent;color:#f97316;font-size:13px;cursor:pointer;letter-spacing:.2px; }
+    .btn-admin-reset:active { background:rgba(251,146,60,.1); }
 
     /* ── 자랑글 탭 ── */
     .tab-title { font-size:19px;font-weight:800;color:var(--pur-d);letter-spacing:1px;margin-bottom:16px;width:100%; }
@@ -448,7 +448,7 @@
         <div class="timer-val" id="timer-val">00:00:00</div>
       </div>
       <div class="ready-msg" id="ready-msg" style="display:none">기운이 충전되었어요 ✨</div>
-      <button class="btn-test" id="test-mode-btn" onclick="toggleTestMode()" style="display:none">🔧 테스트 모드 OFF</button>
+      <button class="btn-admin-reset" id="admin-reset-btn" onclick="adminResetKi()" style="display:none">⚡ 기 다시 받기</button>
     </div>
 
     <!-- 자랑글 탭 -->
@@ -531,7 +531,6 @@ let uData   = null;   // Firestore user doc
 const ADMIN_UID = 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
 let canDay  = false;
 let dayBusy = false;
-let testMode = false;
 let tickId  = null;
 let kiPick  = 1;      // 글에 담을 기 수
 
@@ -748,7 +747,7 @@ function showApp() {
   if (uData.photoURL) { av.src = uData.photoURL; av.style.display = ''; }
   else { av.src = ''; av.style.display = 'none'; }
   document.querySelector('.btn-out').style.display = me.isAnonymous ? 'none' : '';
-  document.getElementById('test-mode-btn').style.display = me.uid === ADMIN_UID ? '' : 'none';
+  document.getElementById('admin-reset-btn').style.display = me.uid === ADMIN_UID ? '' : 'none';
   renderKi();
   startTick();
   loadFeed();
@@ -810,7 +809,7 @@ function setCanDay(v) {
 
 /* ─── 일일 기 받기 ─── */
 async function collectDailyKi() {
-  if ((!canDay && !testMode) || dayBusy) return;
+  if (!canDay || dayBusy) return;
   dayBusy = true;
 
   // ── 1단계: 3초 충전 (하얗게 빛나기) ──
@@ -840,26 +839,17 @@ async function collectDailyKi() {
   // ── 3단계: 저장 ──
   try {
     const newBal = uData.kiBalance + 1;
-    if (testMode) {
-      await db.collection('users').doc(me.uid).update({ kiBalance: newBal });
-      uData.kiBalance = newBal;
-      renderKi(); toast('기를 받았어요! +1기 (테스트)');
-    } else {
-      await db.collection('users').doc(me.uid).update({ kiBalance: newBal, lastDailyKi: today() });
-      uData.kiBalance = newBal; uData.lastDailyKi = today();
-      renderKi(); setCanDay(false); toast('기를 받았어요! +1기');
-    }
+    await db.collection('users').doc(me.uid).update({ kiBalance: newBal, lastDailyKi: today() });
+    uData.kiBalance = newBal; uData.lastDailyKi = today();
+    renderKi(); setCanDay(false); toast('기를 받았어요! +1기');
   } catch(e) { toast('오류: ' + e.message); }
   finally { dayBusy = false; }
 }
 
-function toggleTestMode() {
+function adminResetKi() {
   if (me.uid !== ADMIN_UID) return;
-  testMode = !testMode;
-  const btn = document.getElementById('test-mode-btn');
-  btn.textContent = testMode ? '🔧 테스트 모드 ON' : '🔧 테스트 모드 OFF';
-  btn.classList.toggle('active', testMode);
-  if (testMode) setCanDay(true);
+  uData.lastDailyKi = '';
+  tick();
 }
 
 /* ─── 탭 전환 ─── */
