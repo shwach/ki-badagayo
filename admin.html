@@ -99,6 +99,7 @@
     .user-name { font-size:14px; font-weight:700; color:#0c4a6e; }
     .user-meta { font-size:12px; color:#7dd3fc; margin-top:2px; }
     .user-uid  { font-size:10px; color:#94a3b8; font-family:monospace; margin-top:2px; }
+    .user-last-visit { font-size:10px; color:#b0bec5; margin-top:2px; }
     .user-banned { font-size:11px; color:#ef4444; font-weight:700; margin-left:6px; }
     .user-posts { margin-top:10px; padding-left:10px; border-left:2px solid #e0f2fe; display:none; }
     .user-post-item { padding:7px 0; border-bottom:1px solid #f0f9ff; }
@@ -369,6 +370,7 @@ async function loadUsers() {
             <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned"> 🚫 차단됨</span>' : ''}</div>
             <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
             <div class="user-uid">${d.id}</div>
+            <div class="user-last-visit">최근 접속: ${u.lastVisit ? u.lastVisit.toDate().toLocaleString('ko-KR') : '기록 없음'}</div>
           </div>
           ${isBanned
             ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`

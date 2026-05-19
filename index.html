@@ -617,6 +617,8 @@ async function initUser(user) {
   } else {
     uData = snap.data();
   }
+  try { await ref.update({ lastVisit: firebase.firestore.FieldValue.serverTimestamp() }); }
+  catch(e) { console.warn('lastVisit 기록 실패:', e); }
 }
 
 /* ─── 앱 진입 ─── */
