@@ -186,7 +186,7 @@
     <!-- ── 탭: 회원 관리 ── -->
     <div id="panel-user" class="tab-panel">
       <div class="card">
-        <h2>👥 회원 목록 (기 많은 순)</h2>
+        <h2>👥 회원 목록 (기 많은 순) <span id="user-count" style="font-size:13px;font-weight:400;color:#7dd3fc;"></span></h2>
         <div id="user-list"><div class="empty-msg">불러오는 중...</div></div>
       </div>
     </div>
@@ -356,6 +356,7 @@ async function loadUsers() {
     const snap = await db.collection('users').orderBy('kiBalance', 'desc').limit(50).get();
     if (snap.empty) { list.innerHTML = '<div class="empty-msg">회원이 없어요.</div>'; return; }
 
+    document.getElementById('user-count').textContent = `총 ${snap.size}명`;
     list.innerHTML = '';
     snap.docs.forEach(d => {
       const u = d.data();
