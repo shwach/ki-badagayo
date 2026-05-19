@@ -174,11 +174,24 @@
     .ripple    { position:absolute;width:162px;height:162px;border-radius:50%;
                  border:2px solid rgba(139,92,246,.6);
                  animation:rippleOut .85s ease-out forwards;pointer-events:none; }
+    .ripple2   { position:absolute;width:162px;height:162px;border-radius:50%;
+                 border:2px solid rgba(56,189,248,.4);
+                 animation:rippleOut 1.05s .15s ease-out forwards;pointer-events:none; }
 
     @keyframes float3d  { 0%,100%{transform:translateY(0) rotateY(0deg);}30%{transform:translateY(-11px) rotateY(3deg);}70%{transform:translateY(-6px) rotateY(-2deg);} }
     @keyframes orbP     { 0%,100%{box-shadow:0 0 50px rgba(56,189,248,.7),0 0 90px rgba(139,92,246,.4),inset 0 -12px 26px rgba(91,33,182,.2);}50%{box-shadow:0 0 72px rgba(167,139,250,1),0 0 140px rgba(56,189,248,.5),inset 0 -12px 26px rgba(91,33,182,.2);} }
     @keyframes shimmer  { 0%,100%{opacity:.72;}50%{opacity:1;} }
     @keyframes rippleOut{ 0%{transform:scale(1);opacity:1;}100%{transform:scale(2.3);opacity:0;} }
+    @keyframes burstOut { 0%{transform:translate(0,0) scale(1);opacity:1;} 100%{transform:translate(var(--bx),var(--by)) scale(0);opacity:0;} }
+    @keyframes flashIn  { 0%{opacity:0;}20%{opacity:.35;}100%{opacity:0;} }
+    .burst-dot  { position:fixed;border-radius:50%;pointer-events:none;z-index:201;
+                  animation:burstOut var(--bd) cubic-bezier(.2,.8,.4,1) forwards; }
+    .burst-emoji{ position:fixed;pointer-events:none;z-index:202;
+                  animation:burstOut var(--bd) cubic-bezier(.15,.85,.35,1) forwards; }
+    #fx-flash   { position:fixed;inset:0;pointer-events:none;z-index:199;
+                  background:radial-gradient(circle,rgba(167,139,250,.5),rgba(56,189,248,.3),transparent 70%);
+                  opacity:0;animation:none; }
+    #fx-flash.go{ animation:flashIn .6s ease-out forwards; }
 
     .btn-main { width:208px;padding:16px 28px;border-radius:50px;border:none;outline:none;
                 font-size:18px;font-weight:700;letter-spacing:1px;cursor:pointer;
@@ -313,6 +326,7 @@
 
 <div id="hands"></div>
 <div id="fx" style="display:none"></div>
+<div id="fx-flash"></div>
 <div id="toast"></div>
 
 <!-- ── 로딩 ── -->
@@ -513,6 +527,54 @@ function showFx(e) {
   setTimeout(() => { el.style.display='none'; el.innerHTML=''; }, 1150);
 }
 
+function showBurst(originEl) {
+  const rect = originEl.getBoundingClientRect();
+  const cx = rect.left + rect.width  / 2;
+  const cy = rect.top  + rect.height / 2;
+
+  // 화면 플래시
+  const flash = document.getElementById('fx-flash');
+  flash.classList.remove('go');
+  void flash.offsetWidth;
+  flash.classList.add('go');
+
+  // 파티클 색상
+  const colors = ['#38bdf8','#7dd3fc','#818cf8','#a78bfa','#c4b5fd','#f0abfc','#ffffff','#8b5cf6'];
+  const COUNT = 22;
+  for (let i = 0; i < COUNT; i++) {
+    const angle = (i / COUNT) * Math.PI * 2 + (Math.random() - .5) * .4;
+    const dist  = 70 + Math.random() * 130;
+    const size  = 7 + Math.random() * 14;
+    const dur   = (.45 + Math.random() * .35).toFixed(2);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+
+    const d = document.createElement('div');
+    d.className = 'burst-dot';
+    d.style.cssText = `left:${cx}px;top:${cy}px;width:${size}px;height:${size}px;`
+      + `margin:-${size/2}px 0 0 -${size/2}px;background:${color};`
+      + `--bx:${(Math.cos(angle)*dist).toFixed(1)}px;--by:${(Math.sin(angle)*dist).toFixed(1)}px;--bd:${dur}s;`;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), dur * 1000 + 50);
+  }
+
+  // 이모지 파티클
+  const emojis = ['✨','🌟','💫','⭐','🙏','✨','💜'];
+  for (let i = 0; i < 7; i++) {
+    const angle = (i / 7) * Math.PI * 2 + (Math.random() - .5) * .5;
+    const dist  = 55 + Math.random() * 90;
+    const dur   = (.55 + Math.random() * .4).toFixed(2);
+
+    const d = document.createElement('div');
+    d.className = 'burst-emoji';
+    d.style.cssText = `left:${cx}px;top:${cy}px;font-size:${22+Math.random()*18|0}px;`
+      + `margin:-16px 0 0 -16px;`
+      + `--bx:${(Math.cos(angle)*dist).toFixed(1)}px;--by:${(Math.sin(angle)*dist).toFixed(1)}px;--bd:${dur}s;`;
+    d.textContent = emojis[i];
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), dur * 1000 + 50);
+  }
+}
+
 function toast(msg) {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -708,8 +770,10 @@ async function collectDailyKi() {
 
   const wrap = document.querySelector('.orb-wrap');
   const r = document.createElement('div'); r.className='ripple';
-  wrap.appendChild(r); setTimeout(()=>r.remove(), 900);
-  showFx('✨');
+  const r2 = document.createElement('div'); r2.className='ripple2';
+  wrap.appendChild(r); wrap.appendChild(r2);
+  setTimeout(()=>r.remove(), 900); setTimeout(()=>r2.remove(), 1200);
+  showBurst(document.querySelector('.main-orb'));
 
   try {
     const newBal = uData.kiBalance + 1;
