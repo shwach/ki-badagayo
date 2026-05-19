@@ -163,6 +163,19 @@
                       background:radial-gradient(circle at 35% 30%,#fff 0%,#e0f2fe 10%,#bae6fd 22%,#7dd3fc 34%,#38bdf8 46%,#818cf8 60%,#a78bfa 74%,#8b5cf6 87%,#6d28d9 100%);
                       box-shadow:0 0 50px rgba(56,189,248,.7),0 0 90px rgba(139,92,246,.4),inset 0 -12px 26px rgba(91,33,182,.2);
                       animation:float3d 4.2s ease-in-out infinite,orbP 1.7s ease-in-out infinite; }
+    .main-orb.ready.charging { animation:float3d 4.2s ease-in-out infinite,orbCharge 3s ease-in forwards; }
+    @keyframes orbCharge {
+      0%   { filter:saturate(1) brightness(1);
+             box-shadow:0 0 50px rgba(56,189,248,.7),0 0 90px rgba(139,92,246,.4),inset 0 -12px 26px rgba(91,33,182,.2); }
+      50%  { filter:saturate(.4) brightness(1.8);
+             box-shadow:0 0 90px rgba(255,255,255,.9),0 0 160px rgba(200,220,255,.7),inset 0 -12px 26px rgba(255,255,255,.3); }
+      100% { filter:saturate(0) brightness(3);
+             box-shadow:0 0 160px rgba(255,255,255,1),0 0 280px rgba(255,255,255,.95),0 0 420px rgba(210,225,255,.6),inset 0 -12px 26px rgba(255,255,255,.7); }
+    }
+    .charge-ring { position:absolute;width:162px;height:162px;border-radius:50%;
+                   border:2px solid rgba(255,255,255,.75);
+                   animation:chargeRing 1s ease-out forwards;pointer-events:none; }
+    @keyframes chargeRing { 0%{transform:scale(1);opacity:.8;} 100%{transform:scale(2.2);opacity:0;} }
     .main-orb::before { content:'';position:absolute;top:15%;left:19%;width:34%;height:18%;
                         background:rgba(255,255,255,.72);border-radius:50%;transform:rotate(-35deg);
                         filter:blur(2px);animation:shimmer 4s ease-in-out infinite; }
@@ -799,15 +812,32 @@ function setCanDay(v) {
 async function collectDailyKi() {
   if ((!canDay && !testMode) || dayBusy) return;
   dayBusy = true;
-  if (navigator.vibrate) navigator.vibrate([25,15,55]);
 
+  // ── 1단계: 3초 충전 (하얗게 빛나기) ──
+  const orb  = document.querySelector('.main-orb');
   const wrap = document.querySelector('.orb-wrap');
-  const r = document.createElement('div'); r.className='ripple';
-  const r2 = document.createElement('div'); r2.className='ripple2';
-  wrap.appendChild(r); wrap.appendChild(r2);
-  setTimeout(()=>r.remove(), 900); setTimeout(()=>r2.remove(), 1200);
-  showBurst(document.querySelector('.main-orb'));
+  orb.classList.add('charging');
+  if (navigator.vibrate) navigator.vibrate(20);
 
+  const ringInt = setInterval(() => {
+    const ring = document.createElement('div'); ring.className = 'charge-ring';
+    wrap.appendChild(ring);
+    setTimeout(() => ring.remove(), 1000);
+  }, 600);
+
+  await new Promise(res => setTimeout(res, 3000));
+  clearInterval(ringInt);
+  orb.classList.remove('charging');
+
+  // ── 2단계: 폭발 ──
+  if (navigator.vibrate) navigator.vibrate([30,15,80,10,150]);
+  const r  = document.createElement('div'); r.className  = 'ripple';
+  const r2 = document.createElement('div'); r2.className = 'ripple2';
+  wrap.appendChild(r); wrap.appendChild(r2);
+  setTimeout(() => r.remove(), 900); setTimeout(() => r2.remove(), 1200);
+  showBurst(orb);
+
+  // ── 3단계: 저장 ──
   try {
     const newBal = uData.kiBalance + 1;
     if (testMode) {
