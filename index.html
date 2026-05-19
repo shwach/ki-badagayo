@@ -94,6 +94,10 @@
     .app-header { width:100%;max-width:420px;display:flex;align-items:center;
                   justify-content:space-between;padding:50px 18px 10px; }
     .logo      { font-size:18px; font-weight:800; color:var(--pur-d); letter-spacing:2px; }
+    .user-row  { display:flex; align-items:center; gap:8px; }
+    .user-name { font-size:13px; color:var(--muted); }
+    .avatar    { width:28px; height:28px; border-radius:50%; object-fit:cover; }
+    .btn-out   { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; }
     .tab { display:none; flex-direction:column; align-items:center; width:100%; }
     .tab.active { display:flex; }
 
@@ -343,6 +347,11 @@
 <div id="pg-app" class="page">
   <div class="app-header">
     <span class="logo">기받아가요</span>
+    <div class="user-row">
+      <span class="user-name" id="hdr-name"></span>
+      <img class="avatar" id="hdr-avatar" src="" alt="" style="display:none">
+      <button class="btn-out" onclick="signOut()">로그아웃</button>
+    </div>
   </div>
 
   <div class="inner">
@@ -623,6 +632,10 @@ function showApp() {
   loadFeed();
   switchTab('home');
   showPage('pg-app');
+}
+
+function signOut() {
+  auth.signOut().then(() => showPage('pg-login')).catch(e => toast('오류: ' + e.message));
 }
 
 /* ─── Ki 렌더 ─── */
