@@ -21,8 +21,7 @@ service cloud.firestore {
                     && request.resource.data.content.size() > 0
                     && request.resource.data.content.size() <= 300
                     && request.resource.data.kiPool  >= 1
-                    && request.resource.data.kiPool  == request.resource.data.kiRemaining
-                    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.banned != true;
+                    && request.resource.data.kiPool  == request.resource.data.kiRemaining;
       // kiRemaining 차감은 트랜잭션으로만 허용
       allow update: if request.auth != null
                     && request.resource.data.diff(resource.data).affectedKeys()
