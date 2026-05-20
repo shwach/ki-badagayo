@@ -837,8 +837,9 @@ async function claimKi(postId) {
     showFx('🙏');
     toast('자랑글에서 기를 받았어요! +1기');
 
-    // 관리자는 버튼 유지, 일반 유저는 비활성화
-    if (me.uid !== ADMIN_UID) {
+    if (isAdmin) {
+      btn.disabled = false; btn.textContent = '기 받기';
+    } else {
       document.querySelectorAll('.btn-feed-claim').forEach(b => {
         b.className = 'btn-feed-claim done';
         b.disabled  = true;
