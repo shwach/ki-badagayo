@@ -370,7 +370,7 @@ async function loadUsers() {
             <div class="user-name">${esc(u.displayName || '(이름없음)')}${isBanned ? '<span class="user-banned"> 🚫 차단됨</span>' : ''}</div>
             <div class="user-meta">기 ${u.kiBalance ?? 0}개 보유</div>
             <div class="user-uid">${d.id}</div>
-            <div class="user-last-visit">최근 접속: ${u.lastVisit ? u.lastVisit.toDate().toLocaleString('ko-KR') : '기록 없음'}</div>
+            <div class="user-last-visit">최근 접속: ${u.lastVisit ? u.lastVisit.toDate().toLocaleString('ko-KR') : '기록 없음'} · ${u.visitCount ?? 0}회 방문</div>
           </div>
           ${isBanned
             ? `<button class="btn-unban" onclick="unbanUser('${d.id}')">차단 해제</button>`
