@@ -994,10 +994,17 @@ async function loadTopPosts() {
       return;
     }
 
+    // 동점이면 같은 등수 부여
+    let rank = 1;
+    posts.forEach((p, i) => {
+      if (i > 0 && p.kiClaimed < posts[i - 1].kiClaimed) rank = i + 1;
+      p.rank = rank;
+    });
+
     const medals = ['🥇','🥈','🥉'];
-    container.innerHTML = posts.map((p, i) => `
+    container.innerHTML = posts.map(p => `
       <div class="rank-card">
-        <div class="rank-num">${medals[i] || `${i+1}`}</div>
+        <div class="rank-num">${medals[p.rank - 1] || p.rank}</div>
         <div class="rank-body">
           <div class="rank-text">${esc(p.content)}</div>
           <div class="rank-stat">
