@@ -815,11 +815,12 @@ async function claimKi(postId) {
         t.get(postRef), t.get(claimRef), t.get(userRef)
       ]);
 
-      if (!postSnap.exists)      throw new Error('글이 없습니다');
-      if (userSnap.data().lastClaimDate === today()) throw new Error('오늘은 이미 기를 받았어요');
+      if (!postSnap.exists) throw new Error('글이 없습니다');
       const postData = postSnap.data();
+      const isAdmin = me.uid === ADMIN_UID;
+      if (!isAdmin && userSnap.data().lastClaimDate === today()) throw new Error('오늘은 이미 기를 받았어요');
       if (!postData.isAdmin && postData.kiRemaining <= 0) throw new Error('기가 모두 소진되었습니다');
-      if (postData.authorId === me.uid) throw new Error('내 글에서는 받을 수 없어요');
+      if (!isAdmin && postData.authorId === me.uid) throw new Error('내 글에서는 받을 수 없어요');
 
       if (!postData.isAdmin) t.update(postRef, { kiRemaining: postData.kiRemaining - 1 });
       t.set(claimRef, { uid: me.uid, postId, date: today(),
