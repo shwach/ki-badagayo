@@ -823,23 +823,29 @@ async function claimKi(postId) {
       if (!isAdmin && postData.authorId === me.uid) throw new Error('내 글에서는 받을 수 없어요');
 
       if (!postData.isAdmin) t.update(postRef, { kiRemaining: postData.kiRemaining - 1 });
-      t.set(claimRef, { uid: me.uid, postId, date: today(),
-                        claimedAt: firebase.firestore.FieldValue.serverTimestamp() });
-      t.update(userRef, { kiBalance: userSnap.data().kiBalance + 1, lastClaimDate: today() });
+      if (!isAdmin) {
+        t.set(claimRef, { uid: me.uid, postId, date: today(),
+                          claimedAt: firebase.firestore.FieldValue.serverTimestamp() });
+        t.update(userRef, { kiBalance: userSnap.data().kiBalance + 1, lastClaimDate: today() });
+      } else {
+        t.update(userRef, { kiBalance: userSnap.data().kiBalance + 1 });
+      }
     });
 
     uData.kiBalance += 1;
-    uData.lastClaimDate = today();
+    if (me.uid !== ADMIN_UID) uData.lastClaimDate = today();
     renderKi();
     showFx('🙏');
     toast('자랑글에서 기를 받았어요! +1기');
 
-    // 모든 기 받기 버튼 비활성화
-    document.querySelectorAll('.btn-feed-claim').forEach(b => {
-      b.className = 'btn-feed-claim done';
-      b.disabled  = true;
-      b.textContent = '✅ 오늘 기를 받았어요';
-    });
+    // 관리자는 버튼 유지, 일반 유저는 비활성화
+    if (me.uid !== ADMIN_UID) {
+      document.querySelectorAll('.btn-feed-claim').forEach(b => {
+        b.className = 'btn-feed-claim done';
+        b.disabled  = true;
+        b.textContent = '✅ 오늘 기를 받았어요';
+      });
+    }
 
   } catch(e) {
     toast(e.message);
