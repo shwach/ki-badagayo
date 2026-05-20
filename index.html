@@ -805,8 +805,10 @@ async function claimKi(postId) {
   if (!btn || btn.disabled) return;
   btn.disabled = true; btn.textContent = '받는 중...';
 
+  const isAdmin  = me.uid === ADMIN_UID;
   const postRef  = db.collection('posts').doc(postId);
-  const claimRef = postRef.collection('dailyClaims').doc(`${today()}_${me.uid}`);
+  const claimId  = isAdmin ? `${today()}_${me.uid}_${Date.now()}` : `${today()}_${me.uid}`;
+  const claimRef = postRef.collection('dailyClaims').doc(claimId);
   const userRef  = db.collection('users').doc(me.uid);
 
   try {
@@ -817,19 +819,16 @@ async function claimKi(postId) {
 
       if (!postSnap.exists) throw new Error('글이 없습니다');
       const postData = postSnap.data();
-      const isAdmin = me.uid === ADMIN_UID;
       if (!isAdmin && userSnap.data().lastClaimDate === today()) throw new Error('오늘은 이미 기를 받았어요');
       if (!postData.isAdmin && postData.kiRemaining <= 0) throw new Error('기가 모두 소진되었습니다');
       if (!isAdmin && postData.authorId === me.uid) throw new Error('내 글에서는 받을 수 없어요');
 
       if (!postData.isAdmin) t.update(postRef, { kiRemaining: postData.kiRemaining - 1 });
-      if (!isAdmin) {
-        t.set(claimRef, { uid: me.uid, postId, date: today(),
-                          claimedAt: firebase.firestore.FieldValue.serverTimestamp() });
-        t.update(userRef, { kiBalance: userSnap.data().kiBalance + 1, lastClaimDate: today() });
-      } else {
-        t.update(userRef, { kiBalance: userSnap.data().kiBalance + 1 });
-      }
+      t.set(claimRef, { uid: me.uid, postId, date: today(),
+                        claimedAt: firebase.firestore.FieldValue.serverTimestamp() });
+      const update = { kiBalance: userSnap.data().kiBalance + 1 };
+      if (!isAdmin) update.lastClaimDate = today();
+      t.update(userRef, update);
     });
 
     uData.kiBalance += 1;
