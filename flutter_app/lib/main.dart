@@ -59,8 +59,14 @@ class _WebViewPageState extends State<WebViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF1a1a2e),
       body: SafeArea(
-        child: WebViewWidget(controller: _controller),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 430),
+            child: WebViewWidget(controller: _controller),
+          ),
+        ),
       ),
     );
   }
