@@ -383,7 +383,9 @@
         <button class="btn-settings" onclick="toggleAccountMenu()">⚙️</button>
         <button class="btn-out" onclick="signOut()">로그아웃</button>
       </div>
-      <button class="btn-delete-account" onclick="deleteAccount()">계정 삭제</button>
+      <div id="account-menu" style="display:none">
+        <button class="btn-delete-account" onclick="deleteAccount()">계정 삭제</button>
+      </div>
     </div>
   </div>
 
@@ -670,9 +672,8 @@ function showApp() {
 }
 
 function toggleAccountMenu() {
-  const btn = document.querySelector('.btn-delete-account');
-  const isHidden = getComputedStyle(btn).display === 'none';
-  btn.style.display = isHidden ? 'block' : 'none';
+  const menu = document.getElementById('account-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
 
 function signOut() {
