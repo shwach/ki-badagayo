@@ -299,9 +299,7 @@
 
     @media (min-width: 768px) {
       .inner, .app-header { max-width:900px; }
-      #pg-app { padding-bottom:80px; display:flex; flex-direction:column; align-items:center; min-height:100%; }
-      #pg-app .inner { flex:1; display:flex; flex-direction:column; }
-      #tab-home.tab.active { flex:1; }
+      #pg-app { padding-bottom:80px; }
 
       .home-grid {
         display:grid;
@@ -309,11 +307,10 @@
         gap:36px;
         align-items:center;
         width:100%;
-        flex:1;
-        min-height:0;
+        min-height:calc(100vh - 210px);
       }
-      .home-col-left  { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; }
-      .home-col-right { display:flex; flex-direction:column; justify-content:center; padding-top:0; height:100%; }
+      .home-col-left  { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+      .home-col-right { display:flex; flex-direction:column; justify-content:center; }
 
       /* 오브 태블릿에서 더 크게 */
       .main-orb  { width:210px; height:210px; }
