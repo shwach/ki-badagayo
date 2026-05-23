@@ -33,12 +33,19 @@ class WebViewPage extends StatefulWidget {
 
 class _WebViewPageState extends State<WebViewPage> {
   late final WebViewController _controller;
+  bool _hasError = false;
+  bool _isLoading = true;
+
+  void _load() {
+    _controller.loadRequest(
+      Uri.parse('https://kibadagayo.site?v=${DateTime.now().millisecondsSinceEpoch}'),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _controller = WebViewController()
-      ..clearCache()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF8F6FF))
       ..addJavaScriptChannel(
@@ -57,6 +64,15 @@ class _WebViewPageState extends State<WebViewPage> {
         },
       )
       ..setNavigationDelegate(NavigationDelegate(
+        onPageStarted: (_) {
+          if (mounted) setState(() { _isLoading = true; _hasError = false; });
+        },
+        onPageFinished: (_) {
+          if (mounted) setState(() { _isLoading = false; });
+        },
+        onWebResourceError: (error) {
+          if (mounted) setState(() { _isLoading = false; _hasError = true; });
+        },
         onNavigationRequest: (req) {
           if (req.url.startsWith('https://kibadagayo.site') ||
               req.url.startsWith('https://www.gstatic.com') ||
@@ -67,15 +83,43 @@ class _WebViewPageState extends State<WebViewPage> {
           }
           return NavigationDecision.prevent;
         },
-      ))
-      ..loadRequest(Uri.parse('https://kibadagayo.site?v=${DateTime.now().millisecondsSinceEpoch}'));
+      ));
+    _load();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F6FF),
       body: SafeArea(
-        child: WebViewWidget(controller: _controller),
+        child: Stack(
+          children: [
+            WebViewWidget(controller: _controller),
+            if (_hasError)
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('연결에 실패했어요', style: TextStyle(fontSize: 16, color: Color(0xFF5B21B6))),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() { _hasError = false; _isLoading = true; });
+                        _load();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF7C3AED),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                      ),
+                      child: const Text('다시 시도'),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
