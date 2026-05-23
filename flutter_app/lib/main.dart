@@ -69,7 +69,7 @@ class _WebViewPageState extends State<WebViewPage> {
           return NavigationDecision.prevent;
         },
       ))
-      ..loadRequest(Uri.parse('https://kibadagayo.site'));
+      ..loadRequest(Uri.parse('https://kibadagayo.site?v=${DateTime.now().millisecondsSinceEpoch}'));
   }
 
   @override
