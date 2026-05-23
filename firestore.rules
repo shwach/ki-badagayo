@@ -10,6 +10,7 @@ service cloud.firestore {
                     && request.resource.data.diff(resource.data).affectedKeys()
                        .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL','lastClaimDate','lastVisit','visitCount'])
                     || request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
+      allow delete: if request.auth != null && request.auth.uid == uid;
     }
 
     // 자랑글: 생성만 허용 (수정/삭제 불가)
@@ -29,7 +30,8 @@ service cloud.firestore {
                     && request.resource.data.kiRemaining == resource.data.kiRemaining - 1
                     && resource.data.kiRemaining > 0;
       allow delete: if request.auth != null
-                    && request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
+                    && (request.auth.uid == resource.data.authorId
+                        || request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2');
     }
 
     // 일일 클레임: 본인 문서만 생성, ID는 날짜_uid 형식 강제
