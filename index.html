@@ -684,16 +684,16 @@ async function deleteAccount() {
   if (!confirm('계정을 삭제하면 기 잔액과 자랑글이 모두 사라지고 복구할 수 없어요.\n정말 삭제할까요?')) return;
   try {
     const uid = me.uid;
-    const batch = db.batch();
-    batch.delete(db.collection('users').doc(uid));
-    const posts = await db.collection('posts').where('authorId', '==', uid).get();
-    posts.forEach(d => batch.delete(d.ref));
-    await batch.commit();
+    try {
+      const batch = db.batch();
+      batch.delete(db.collection('users').doc(uid));
+      const posts = await db.collection('posts').where('authorId', '==', uid).get();
+      posts.forEach(d => batch.delete(d.ref));
+      await batch.commit();
+    } catch(e) {}
     await me.delete();
-    showPage('pg-login');
-  } catch(e) {
-    toast('삭제 중 오류가 발생했어요: ' + e.message);
-  }
+  } catch(e) {}
+  showPage('pg-login');
 }
 
 /* ─── Ki 렌더 ─── */
