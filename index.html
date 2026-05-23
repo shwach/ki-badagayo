@@ -294,34 +294,31 @@
     #toast.show { opacity:1; }
 
     /* ── 태블릿 레이아웃 (768px+) ── */
-    .home-grid { display:contents; }
-    .home-col-left, .home-col-right { display:contents; }
+    .home-grid, .home-col-left, .home-col-right { display:contents; }
 
     @media (min-width: 768px) {
-      .inner, .app-header { max-width:900px; }
+      .inner, .app-header { max-width:680px; }
       #pg-app { padding-bottom:80px; }
 
-      .home-grid {
-        display:grid;
-        grid-template-columns:55fr 45fr;
-        gap:36px;
-        align-items:center;
-        width:100%;
-        min-height:calc(100vh - 210px);
+      /* 홈탭: 단일 컬럼, 화면 꽉 채우기 */
+      #tab-home.tab.active {
+        justify-content:center;
+        min-height:calc(100vh - 160px);
       }
-      .home-col-left  { display:flex; flex-direction:column; align-items:center; justify-content:center; }
-      .home-col-right { display:flex; flex-direction:column; justify-content:center; }
+      .feed-wrap  { max-width:100%; }
 
-      /* 오브 태블릿에서 더 크게 */
-      .main-orb  { width:210px; height:210px; }
-      .orb-glow  { width:280px; height:280px; }
-      .orb-emoji { font-size:66px; }
-      .ripple, .ripple2 { width:210px; height:210px; }
-      .charge-ring      { width:210px; height:210px; }
+      /* 오브 크게 */
+      .main-orb  { width:220px; height:220px; }
+      .orb-glow  { width:290px; height:290px; }
+      .orb-emoji { font-size:70px; }
+      .ripple, .ripple2 { width:220px; height:220px; }
+      .charge-ring      { width:220px; height:220px; }
+      .btn-main  { width:260px; font-size:18px; padding:18px 32px; }
+      .orb-wrap  { margin-bottom:44px; }
 
       /* 자랑글탭 2열 */
-      #top-posts  { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-      .rank-card  { margin-bottom:0; }
+      #top-posts { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .rank-card { margin-bottom:0; }
 
       .tab-bar { height:72px; }
       .tab-btn .ti { font-size:24px; }
