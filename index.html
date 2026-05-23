@@ -98,7 +98,8 @@
     .user-name { font-size:13px; color:var(--muted); }
     .avatar    { width:28px; height:28px; border-radius:50%; object-fit:cover; }
     .btn-out   { background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; }
-    .btn-delete-account { background:none; border:none; color:#f87171; font-size:11px; cursor:pointer; margin-left:4px; }
+    .btn-delete-account { background:none; border:none; color:#f87171; font-size:11px; cursor:pointer; margin-left:4px; display:none; }
+    .user-name { cursor:pointer; }
     .tab { display:none; flex-direction:column; align-items:center; width:100%; }
     .tab.active { display:flex; }
 
@@ -377,7 +378,7 @@
     <span class="logo">기받아가요</span>
     <div class="user-row">
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="user-name" id="hdr-name"></span>
+        <span class="user-name" id="hdr-name" onclick="toggleAccountMenu()"></span>
         <img class="avatar" id="hdr-avatar" src="" alt="" style="display:none">
         <button class="btn-out" onclick="signOut()">로그아웃</button>
       </div>
@@ -665,6 +666,11 @@ function showApp() {
   loadFeed();
   switchTab('home');
   showPage('pg-app');
+}
+
+function toggleAccountMenu() {
+  const btn = document.querySelector('.btn-delete-account');
+  btn.style.display = btn.style.display === 'none' ? '' : 'none';
 }
 
 function signOut() {
