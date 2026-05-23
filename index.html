@@ -693,7 +693,9 @@ async function deleteAccount() {
     } catch(e) {}
     await me.delete();
   } catch(e) {}
-  showPage('pg-login');
+  const newUser = await auth.signInAnonymously();
+  await initUser(newUser.user);
+  showApp();
 }
 
 /* ─── Ki 렌더 ─── */
