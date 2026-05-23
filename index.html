@@ -671,7 +671,8 @@ function showApp() {
 
 function toggleAccountMenu() {
   const btn = document.querySelector('.btn-delete-account');
-  btn.style.display = btn.style.display === 'none' ? '' : 'none';
+  const isHidden = getComputedStyle(btn).display === 'none';
+  btn.style.display = isHidden ? 'block' : 'none';
 }
 
 function signOut() {
