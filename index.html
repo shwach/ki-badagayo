@@ -293,6 +293,32 @@
              pointer-events:none;white-space:nowrap; }
     #toast.show { opacity:1; }
 
+    /* ── 태블릿 레이아웃 (768px+) ── */
+    .home-grid { display:contents; }
+    .home-col-left, .home-col-right { display:contents; }
+
+    @media (min-width: 768px) {
+      .inner, .app-header { max-width:860px; }
+      #pg-app { padding-bottom:80px; }
+
+      .home-grid {
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:32px;
+        align-items:start;
+        width:100%;
+      }
+      .home-col-left  { display:flex; flex-direction:column; align-items:center; }
+      .home-col-right { display:flex; flex-direction:column; padding-top:8px; }
+
+      #top-posts { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .rank-card  { margin-bottom:0; }
+
+      .tab-bar { height:72px; }
+      .tab-btn  { font-size:13px; }
+      .tab-btn .ti { font-size:24px; }
+    }
+
     /* ── 홈탭 자랑글 피드 ── */
     .feed-title { width:100%; font-size:13px; font-weight:700; color:var(--pur-d);
                   letter-spacing:.5px; margin-bottom:10px; display:flex; align-items:center; gap:6px; }
@@ -357,35 +383,42 @@
 
     <!-- 기 받기 탭 -->
     <div id="tab-home" class="tab active">
+      <div class="home-grid">
 
-      <!-- 자랑글 피드 -->
-      <div class="feed-wrap" id="feed-wrap" style="display:none">
-        <div class="feed-title">📬 기 배달</div>
-        <div id="post-feed"></div>
-      </div>
+        <div class="home-col-left">
+          <div class="card">
+            <div class="card-lbl">보유한 기</div>
+            <div class="ki-num" id="ki-num">0</div>
+            <div class="orb-row" id="orb-row">
+              <span class="orb-empty">아직 기가 없어요. 첫 기를 받아보세요!</span>
+            </div>
+          </div>
 
-      <div class="card">
-        <div class="card-lbl">보유한 기</div>
-        <div class="ki-num" id="ki-num">0</div>
-        <div class="orb-row" id="orb-row">
-          <span class="orb-empty">아직 기가 없어요. 첫 기를 받아보세요!</span>
+          <div class="orb-wrap">
+            <div class="orb-glow"></div>
+            <div class="main-orb" id="main-orb">
+              <span class="orb-emoji" id="orb-emoji">🙏</span>
+            </div>
+          </div>
+
+          <button class="btn-main off" id="daily-btn" onclick="collectDailyKi()">🙏 기 충전 중</button>
+          <div class="timer-box" id="timer-box">
+            <div class="timer-lbl">다음 기까지</div>
+            <div class="timer-val" id="timer-val">00:00:00</div>
+          </div>
+          <div class="ready-msg" id="ready-msg" style="display:none">기운이 충전되었어요 ✨</div>
+          <button class="btn-admin-reset" id="admin-reset-btn" onclick="adminResetKi()" style="display:none">⚡ 기 다시 받기</button>
         </div>
-      </div>
 
-      <div class="orb-wrap">
-        <div class="orb-glow"></div>
-        <div class="main-orb" id="main-orb">
-          <span class="orb-emoji" id="orb-emoji">🙏</span>
+        <div class="home-col-right">
+          <!-- 자랑글 피드 -->
+          <div class="feed-wrap" id="feed-wrap" style="display:none">
+            <div class="feed-title">📬 기 배달</div>
+            <div id="post-feed"></div>
+          </div>
         </div>
-      </div>
 
-      <button class="btn-main off" id="daily-btn" onclick="collectDailyKi()">🙏 기 충전 중</button>
-      <div class="timer-box" id="timer-box">
-        <div class="timer-lbl">다음 기까지</div>
-        <div class="timer-val" id="timer-val">00:00:00</div>
       </div>
-      <div class="ready-msg" id="ready-msg" style="display:none">기운이 충전되었어요 ✨</div>
-      <button class="btn-admin-reset" id="admin-reset-btn" onclick="adminResetKi()" style="display:none">⚡ 기 다시 받기</button>
     </div>
 
     <!-- 자랑글 탭 -->
