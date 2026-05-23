@@ -717,9 +717,14 @@ function setCanDay(v) {
 }
 
 /* ─── 일일 기 받기 ─── */
+function haptic(type) {
+  try { if (window.Haptic) Haptic.postMessage(type); } catch(e) {}
+}
+
 async function collectDailyKi() {
   if (!canDay || dayBusy) return;
   dayBusy = true;
+  haptic('light');
 
   // ── 1단계: 3초 충전 (하얗게 빛나기) ──
   const orb  = document.querySelector('.main-orb');
@@ -738,6 +743,7 @@ async function collectDailyKi() {
   orb.classList.remove('charging');
 
   // ── 2단계: 폭발 ──
+  haptic('heavy');
   if (navigator.vibrate) navigator.vibrate([30,15,80,10,150]);
   const r  = document.createElement('div'); r.className  = 'ripple';
   const r2 = document.createElement('div'); r2.className = 'ripple2';
@@ -856,6 +862,7 @@ async function claimKi(postId) {
 
     uData.kiBalance += 1;
     if (me.uid !== ADMIN_UID) uData.lastClaimDate = today();
+    haptic('success');
     renderKi();
     showFx('🙏');
     toast('자랑글에서 기를 받았어요! +1기');

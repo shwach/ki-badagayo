@@ -42,9 +42,23 @@ class _WebViewPageState extends State<WebViewPage> {
       ..clearLocalStorage()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF8F6FF))
+      ..addJavaScriptChannel(
+        'Haptic',
+        onMessageReceived: (msg) {
+          switch (msg.message) {
+            case 'heavy':
+              HapticFeedback.heavyImpact();
+            case 'medium':
+              HapticFeedback.mediumImpact();
+            case 'light':
+              HapticFeedback.lightImpact();
+            case 'success':
+              HapticFeedback.vibrate();
+          }
+        },
+      )
       ..setNavigationDelegate(NavigationDelegate(
         onNavigationRequest: (req) {
-          // 외부 링크는 앱 안에서만 처리
           if (req.url.startsWith('https://kibadagayo.site') ||
               req.url.startsWith('https://www.gstatic.com') ||
               req.url.startsWith('https://firestore.googleapis.com') ||
