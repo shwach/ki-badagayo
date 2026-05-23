@@ -39,7 +39,6 @@ class _WebViewPageState extends State<WebViewPage> {
     super.initState();
     _controller = WebViewController()
       ..clearCache()
-      ..clearLocalStorage()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF8F6FF))
       ..addJavaScriptChannel(
