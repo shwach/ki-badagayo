@@ -691,11 +691,13 @@ async function deleteAccount() {
       posts.forEach(d => batch.delete(d.ref));
       await batch.commit();
     } catch(e) {}
-    await me.delete();
-  } catch(e) {}
-  const newUser = await auth.signInAnonymously();
-  await initUser(newUser.user);
-  showApp();
+    await firebase.auth().currentUser.delete();
+    const newUser = await auth.signInAnonymously();
+    await initUser(newUser.user);
+    showApp();
+  } catch(e) {
+    toast('오류: ' + e.code + ' ' + e.message);
+  }
 }
 
 /* ─── Ki 렌더 ─── */
