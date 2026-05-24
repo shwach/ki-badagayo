@@ -713,9 +713,7 @@ async function confirmDeleteAccount() {
       await batch.commit();
     } catch(e) {}
     await firebase.auth().currentUser.delete();
-    const newUser = await auth.signInAnonymously();
-    await initUser(newUser.user);
-    showApp();
+    // onAuthStateChanged가 자동으로 signInAnonymously → showApp() 처리
   } catch(e) {
     toast('오류: ' + e.code + ' ' + e.message);
   }
