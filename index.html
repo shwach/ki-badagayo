@@ -357,6 +357,13 @@
     .rank-stat   { font-size:12px; color:var(--muted); display:flex; gap:10px; }
     .rank-stat .ki-got  { color:var(--pur-d); font-weight:700; }
     .rank-empty  { text-align:center; padding:52px 0; font-size:14px; color:var(--muted); line-height:1.75; }
+    .confirm-overlay { position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:999; }
+    .confirm-box { background:#fff;border-radius:18px;padding:24px 20px;max-width:300px;width:90%;text-align:center; }
+    .confirm-box p { font-size:14px;color:#334155;line-height:1.6;margin-bottom:20px; }
+    .confirm-btns { display:flex;gap:10px; }
+    .confirm-btns button { flex:1;padding:12px;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer; }
+    .confirm-cancel { background:#f1f5f9;color:#64748b; }
+    .confirm-ok { background:#f87171;color:#fff; }
   </style>
 </head>
 <body>
@@ -367,6 +374,16 @@
 <div id="toast"></div>
 
 <!-- ── 로딩 ── -->
+<div id="delete-confirm" class="confirm-overlay" style="display:none">
+  <div class="confirm-box">
+    <p>계정을 삭제하면 기 잔액과 자랑글이 모두 사라지고 복구할 수 없어요.<br>정말 삭제할까요?</p>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="document.getElementById('delete-confirm').style.display='none'">취소</button>
+      <button class="confirm-ok" onclick="confirmDeleteAccount()">삭제</button>
+    </div>
+  </div>
+</div>
+
 <div id="pg-loading" class="page active">
   <div class="spin-orb"></div>
   <p>잠시만요...</p>
@@ -680,8 +697,12 @@ function signOut() {
   auth.signOut().then(() => showPage('pg-login')).catch(e => toast('오류: ' + e.message));
 }
 
-async function deleteAccount() {
-  if (!confirm('계정을 삭제하면 기 잔액과 자랑글이 모두 사라지고 복구할 수 없어요.\n정말 삭제할까요?')) return;
+function deleteAccount() {
+  document.getElementById('delete-confirm').style.display = 'flex';
+}
+
+async function confirmDeleteAccount() {
+  document.getElementById('delete-confirm').style.display = 'none';
   try {
     const uid = me.uid;
     try {
