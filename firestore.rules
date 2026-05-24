@@ -8,7 +8,7 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == uid;
       allow update: if request.auth != null && request.auth.uid == uid
                     && request.resource.data.diff(resource.data).affectedKeys()
-                       .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL','lastClaimDate','lastVisit','visitCount'])
+                       .hasOnly(['kiBalance','lastDailyKi','displayName','photoURL','lastClaimDate','lastVisit','visitCount','blockedUsers'])
                     || request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
       allow delete: if request.auth != null && request.auth.uid == uid;
     }
@@ -32,6 +32,13 @@ service cloud.firestore {
       allow delete: if request.auth != null
                     && (request.auth.uid == resource.data.authorId
                         || request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2');
+    }
+
+    // 신고: 로그인 사용자만 생성
+    match /reports/{reportId} {
+      allow read:   if request.auth.uid == 'WS3FQ9JICAYPgibggl2bEgNG3Bv2';
+      allow create: if request.auth != null;
+      allow update, delete: if false;
     }
 
     // 일일 클레임: 본인 문서만 생성, ID는 날짜_uid 형식 강제
