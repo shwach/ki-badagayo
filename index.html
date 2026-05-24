@@ -1177,6 +1177,23 @@ async function blockUser(authorId) {
 }
 
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+// 백그라운드 복귀 시 로딩 화면 멈춤 복구
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    const loading = document.getElementById('pg-loading');
+    if (loading && loading.classList.contains('active')) {
+      // 로딩 화면이 보이는 상태로 복귀 시 3초 후 강제 복구
+      setTimeout(() => {
+        const stillLoading = document.getElementById('pg-loading');
+        if (stillLoading && stillLoading.classList.contains('active')) {
+          if (uData && me) showApp();
+          else location.reload();
+        }
+      }, 3000);
+    }
+  }
+});
 </script>
 </body>
 </html>
